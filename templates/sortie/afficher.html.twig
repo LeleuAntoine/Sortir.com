@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title sortie.nom %}
+
+{% block body %}
+    <article>
+        <div class="row">
+            <div class="col-sm-6">
+                <p>Nom de la sortie : {{ sortie.nom }}</p>
+                <p>Date et heure de la sortie : {{ sortie.dateHeureDebut | date('d/M/Y H:i') }}</p>
+                <p>Date limite d'inscription : {{ sortie.dateLimiteInscription | date('d/M/Y') }}</p>
+                <p>Nombre de places : {{ sortie.nbInscriptionMax }}</p>
+                <p>Durée : {{ sortie.duree }} minutes</p>
+                <p>Description et infos : {{ sortie.infosSortie }}</p>
+            </div>
+{#            <div class="col-sm-6">#}
+{#                                <p>Campus : {{  }}</p>#}
+{#                                <p>Lieu: {{  }}</p>#}
+{#                                <p>Rue : {{  }}</p>#}
+{#                                <p>Code postal : {{  }}</p>#}
+{#                                <p>Latitude : {{  }}</p>#}
+{#                                <p>Longitude : {{  }}</p>#}
+{#            </div>#}
+        </div>
+    </article>
+
+{#    <div class="d-flex flex-row">#}
+{#        <h3>Liste des participants inscrits :</h3>#}
+{#        <table>#}
+{#            <thead>#}
+{#            <tr>#}
+{#                <th>Pseudo</th>#}
+{#                <th>Nom</th>#}
+{#            </tr>#}
+{#            </thead>#}
+{#            <tbody>#}
+{#            <tr>#}
+{#                                <td>{{  }}</td>#}
+{#                                <td>{{  }}</td>#}
+{#            </tr>#}
+{#            </tbody>#}
+{#        </table>#}
+{#    </div>#}
+{#    <button><a href="{{ path('app_acceuil') }}">Acceuil</a></button>#}
+{% endblock %}
