@@ -20,16 +20,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f60dd700-cdc2-47f6-bebf-bceaf064969a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sortir.com.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sortir.com.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Controller/PrincipalController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Controller/SortieController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Controller/UtilisateurController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/principal/accueil.html.twig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/sortie/index.html.twig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/utilisateur/login.html.twig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/DataFixtures/AppFixtures.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/DataFixtures/AppFixtures.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Etat.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Etat.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/Participant.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Participant.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/symfony.lock" beforeDir="false" afterPath="$PROJECT_DIR$/symfony.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/packages/twig.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/twig.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,7 +180,8 @@
       <workItem from="1603090971934" duration="289000" />
       <workItem from="1603091312472" duration="6106000" />
       <workItem from="1603097808821" duration="486000" />
-      <workItem from="1603098327293" duration="683000" />
+      <workItem from="1603098327293" duration="2476000" />
+      <workItem from="1603100840868" duration="591000" />
     </task>
     <servers />
   </component>
