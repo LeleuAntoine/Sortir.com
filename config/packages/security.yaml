@@ -13,12 +13,15 @@ security:
             provider: our_db_provider
             anonymous: ~
             form_login:
-                login_path: login
-                check_path: login
+                login_path: app_participant_connexion
+                check_path: app_participant_connexion
             # logout_on_user_change: true
             logout:
-                path: logout
-                target: main_home
+                path: app_participant_deconnexion
+                target: accueil
+            remember_me: # durée par défaut : 1 an
+                secret: '%env(APP_SECRET)%'
+                path: /
 
     encoders:
         App\Entity\Participant:

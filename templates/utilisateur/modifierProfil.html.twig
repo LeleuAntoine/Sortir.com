@@ -1,0 +1,10 @@
+{%  extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Modifier mon profil</h1>
+    {{ form_start(profilForm) }}
+    {{ form_widget(profilForm) }}
+    <button type="submit">Modifier mon profil</button>
+
+    {{ form_end(profilForm) }}
+{% endblock %}
