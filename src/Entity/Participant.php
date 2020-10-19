@@ -6,13 +6,23 @@ use App\Repository\ParticipantRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=ParticipantRepository::class)
+ * @UniqueEntity(
+ *     fields={"username"},
+ *     message="Ce pseudo est déjà utilisé",
+ * )
+ * @UniqueEntity(
+ *     fields={"mail"},
+ *     message="Cet email est déjà utilisé",
+ * )
  */
 class Participant implements UserInterface
 {
     /**
+     *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -30,13 +40,14 @@ class Participant implements UserInterface
     private $prenom;
 
     /**
+     *
      * @Assert\Length(
      *      min = 4,
      *      max = 25,
      *      minMessage = "Votre pseudo doit faire au moins {{ limit }} caractères",
      *      maxMessage = "Votre pseudo doit faire {{ limit }} caractères maximum"
      * )
-     * @ORM\Column(name="pseudo", type="string", length=50)
+     * @ORM\Column(name="pseudo", type="string", length=50, unique=true)
      */
     private $username;
 
@@ -48,7 +59,7 @@ class Participant implements UserInterface
     /**
      * @Assert\Email(message="Cet email n'est pas valide")
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $mail;
 

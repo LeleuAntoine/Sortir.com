@@ -32,6 +32,17 @@
       <change beforePath="$PROJECT_DIR$/symfony.lock" beforeDir="false" afterPath="$PROJECT_DIR$/symfony.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/sortie/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/sortie/index.html.twig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Form/InscriptionType.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Form/ModifierProfilType.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/utilisateur/inscription.html.twig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/utilisateur/modifierProfil.html.twig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/utilisateur/voirProfil.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/UtilisateurController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/UtilisateurController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Entity/Participant.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Participant.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/principal/accueil.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/principal/accueil.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/utilisateur/login.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/utilisateur/connexion.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,9 +182,15 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../solosortir.com" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/templates/utilisateur" />
     <property name="php.override.implement.member.chooser.php.doc" value="NONE" />
     <property name="settings.editor.selected.configurable" value="Symfony2.SettingsForm" />
     <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\wamp64\www\sortir.com\templates\utilisateur" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -190,6 +207,7 @@
       <workItem from="1603097808821" duration="486000" />
       <workItem from="1603098327293" duration="2476000" />
       <workItem from="1603100840868" duration="591000" />
+      <workItem from="1603113177240" duration="7215000" />
     </task>
     <servers />
   </component>
@@ -226,7 +244,10 @@
     <state x="1650" y="450" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.2560.1400@0.0.2560.1400" timestamp="1603117836222" />
     <state x="920" y="370" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1603119605999">
       <screen x="0" y="0" width="2560" height="1400" />
+    <state x="-1230" y="278" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1603120326437">
+      <screen x="-1920" y="3" width="1920" height="1040" />
     </state>
+    <state x="-1230" y="278" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1920.1040/-1920.3.1920.1040@-1920.3.1920.1040" timestamp="1603120326437" />
     <state x="690" y="275" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1920.1040/1920.0.1920.948@0.0.1920.1040" timestamp="1603096103183" />
     <state x="920" y="370" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.2560.1400@0.0.2560.1400" timestamp="1603119605999" />
     <state x="987" y="370" key="FileChooserDialogImpl" timestamp="1603118566860">
