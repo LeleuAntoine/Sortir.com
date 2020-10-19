@@ -41,7 +41,7 @@ class Participant implements UserInterface
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=15)
+     * @ORM\Column(type="string", length=50)
      */
     private $telephone;
 
@@ -74,7 +74,7 @@ class Participant implements UserInterface
     private $actif;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $photo;
 
