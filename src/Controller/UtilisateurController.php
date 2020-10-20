@@ -16,47 +16,6 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class UtilisateurController extends AbstractController
 {
     /**
-     * @Route("/inscription", name="app_participant_inscription")
-     */
-    public function sInscrire(Request $request, EntityManagerInterface $em, UserPasswordEncoderInterface $encoder)
-    {
-        $utilisateur = new Participant();
-        $inscriptionForm = $this->createForm(InscriptionType::class, $utilisateur);
-
-        $inscriptionForm->handleRequest($request);
-        if ($inscriptionForm->isSubmitted() && $inscriptionForm->isValid()) {
-            $utilisateur->setActif(true);
-
-            $photoFile = $inscriptionForm['photo']->getData();
-
-            if ($photoFile) {
-                $destination = $this->getParameter('kernel.project_dir').'/public/uploads/photo_participants';
-
-                $nomPhotoOriginal = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $nouveauNomPhoto = Urlizer::urlize($nomPhotoOriginal).'-'.uniqid().'.'.$photoFile->guessExtension();
-
-                $photoFile->move($destination, $nouveauNomPhoto);
-
-                $utilisateur->setPhoto($nouveauNomPhoto);
-            }
-
-            $hashed = $encoder->encodePassword($utilisateur, $utilisateur->getPassword());
-            $utilisateur->setPassword($hashed);
-
-            $em->persist($utilisateur);
-            $em->flush();
-
-            $this->addFlash('success', 'Votre compte a bien été créé !');
-            return $this->redirectToRoute('app_participant_connexion');
-        }
-
-        return $this->render('utilisateur/inscription.html.twig', [
-            'inscriptionForm' => $inscriptionForm->createView(),
-        ]);
-
-    }
-
-    /**
      * @Route("/connexion", name="app_participant_connexion")
      */
     public function seConnecter()
