@@ -7,6 +7,7 @@ use App\Form\InscriptionType;
 use App\Form\ModifierProfilType;
 use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,6 +26,19 @@ class UtilisateurController extends AbstractController
         $inscriptionForm->handleRequest($request);
         if ($inscriptionForm->isSubmitted() && $inscriptionForm->isValid()) {
             $utilisateur->setActif(true);
+
+            $photoFile = $inscriptionForm['photo']->getData();
+
+            if ($photoFile) {
+                $destination = $this->getParameter('kernel.project_dir').'/public/uploads/photo_participants';
+
+                $nomPhotoOriginal = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $nouveauNomPhoto = Urlizer::urlize($nomPhotoOriginal).'-'.uniqid().'.'.$photoFile->guessExtension();
+
+                $photoFile->move($destination, $nouveauNomPhoto);
+
+                $utilisateur->setPhoto($nouveauNomPhoto);
+            }
 
             $hashed = $encoder->encodePassword($utilisateur, $utilisateur->getPassword());
             $utilisateur->setPassword($hashed);
@@ -70,13 +84,29 @@ class UtilisateurController extends AbstractController
     /**
      * @Route("/profil/{id}/modifier", name="app_participant_modifier_profil", requirements={"id": "\d+"})
      */
-    public function modifierProfil(EntityManagerInterface $em, Request $request, Participant $utilisateur)
+    public function modifierProfil(EntityManagerInterface $em, Request $request, Participant $utilisateur, UserPasswordEncoderInterface $encoder)
     {
         $profilForm = $this->createForm(ModifierProfilType::class, $utilisateur);
 
         $profilForm->handleRequest($request);
 
         if ($profilForm->isSubmitted() && $profilForm->isValid()) {
+            $photoFile = $profilForm['photo']->getData();
+
+            if ($photoFile) {
+                $destination = $this->getParameter('kernel.project_dir').'/public/uploads/photo_participants';
+
+                $nomPhotoOriginal = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $nouveauNomPhoto = Urlizer::urlize($nomPhotoOriginal).'-'.uniqid().'.'.$photoFile->guessExtension();
+
+                $photoFile->move($destination, $nouveauNomPhoto);
+
+                $utilisateur->setPhoto($nouveauNomPhoto);
+            }
+
+            $hashed = $encoder->encodePassword($utilisateur, $utilisateur->getPassword());
+            $utilisateur->setPassword($hashed);
+
             $em->persist($utilisateur);
             $em->flush();
 
