@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+    {% block title 'Modifier une sortie' %}
+
+        {% block body %}
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <input type="submit" value="Publier la sortie" class="btn btn-succes">
+            {{ form_end(form) }}
+        {% endblock %}

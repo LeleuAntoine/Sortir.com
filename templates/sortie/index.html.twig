@@ -7,7 +7,7 @@
     <h1>Toutes les sorties</h1>
     {% for sortie in sorties %}
         <article>
-            <table class="table">
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <th scope="col">Nom de la sortie</th>
@@ -31,7 +31,7 @@
                     {# <td><a href="#">{{ sortie.organisateur }}</a></td> #}
                     <td><a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher - </a><a href="#">Se
                             désister</a>
-                        <a href="#">S'inscrire</a><a href="#">Modifier - </a>
+                        <a href="#">S'inscrire</a><a href="{{path('app_sortie_modifier', {id: sortie.id})}}">Modifier - </a>
                         <a href="#">Publier</a><a href="#">Annuler</a></td>
                 </tr>
                 </tbody>

@@ -85,4 +85,7 @@ class Ville
         $this->lieux = $lieux;
     }
 
+    public function __toString(){
+        return $this->nom;
+    }
 }
