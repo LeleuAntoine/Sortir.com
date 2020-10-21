@@ -5,12 +5,18 @@
     {% if profil.username == app.user.username %}
         <button><a href="{{ path('app_participant_modifier_profil', {id: profil.id}) }}">Modifier mon profil</a></button>
     {% endif %}
-    <div>
-        <p>Prénom : {{ profil.prenom }}</p>
-        <p>Nom : {{ profil.nom }}</p>
-        <p>Téléphone : {{ profil.telephone }}</p>
-        <p>Email : {{ profil.mail }}</p>
-        <p>Campus : {{ profil.campus.nom }}</p>
-
+    <div class="row">
+        {% if profil.photo != null %}
+            <div class="col-4">
+                <img class="img" src="{{ profil.photo }}" alt="{{ profil.username }}"/>
+            </div>
+        {% endif%}
+        <div class="col-6">
+            <p class="row">Prénom : {{ profil.prenom }}</p>
+            <p class="row">Nom : {{ profil.nom }}</p>
+            <p class="row">Téléphone : {{ profil.telephone }}</p>
+            <p class="row">Email : {{ profil.mail }}</p>
+            <p class="row">Campus : {{ profil.campus.nom }}</p>
+        </div>
     </div>
 {% endblock %}

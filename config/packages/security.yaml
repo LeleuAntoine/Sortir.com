@@ -8,21 +8,27 @@ security:
                 property: username
 
     firewalls:
+        dev:
+            pattern: ^/(_(profile|wdt)|css|images|js)/
+            security: false
         main:
             pattern: ^/
             provider: our_db_provider
             anonymous: ~
-            form_login:
-                login_path: app_participant_connexion
-                check_path: app_participant_connexion
-            # logout_on_user_change: true
+            guard:
+                authenticators:
+                    - App\Security\ConnexionAuthenticator
             logout:
-                path: app_participant_deconnexion
-                target: accueil
+                path: app_logout
+                target: app_login
             remember_me: # durée par défaut : 1 an
                 secret: '%env(APP_SECRET)%'
                 path: /
 
     encoders:
         App\Entity\Participant:
-            algorithm: bcrypt
+            algorithm: auto
+
+    access_control:
+        - { path: ^/sortie, roles: ROLE_USER }
+        - { path: ^/profil, roles: ROLE_USER }
