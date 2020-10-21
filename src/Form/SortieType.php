@@ -115,15 +115,18 @@ class SortieType extends AbstractType
 
     private function ajoutAutresChamps(FormInterface $form, ?Lieu $lieu)
     {
-        $form->add('rue', EntityType::class, ['disabled' => true,
+        $form->add('rue', EntityType::class, [
+            'disabled' => true,
             'class' => Lieu::class,
             'placeholder' => $lieu ? $lieu->getRue() : '',
             'label' => 'Rue : '])
-            ->add('latitude', EntityType::class, ['disabled' => true,
+            ->add('latitude', EntityType::class, [
+                'disabled' => true,
                 'class' => Lieu::class,
                 'placeholder' =>  $lieu ? $lieu->getLatitude() : '',
                 'label' => 'Latitude : '])
-            ->add('longitude', EntityType::class, ['disabled' => true,
+            ->add('longitude', EntityType::class, [
+                'disabled' => true,
                 'class' => Lieu::class,
                 'placeholder' => $lieu ?  $lieu->getLongitude() : '',
                 'label' => 'Longitude : ']);
