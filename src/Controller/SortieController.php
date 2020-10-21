@@ -28,9 +28,10 @@ class SortieController extends AbstractController
         $campus = $campusRepository->findAll();
 
         $filtreCampus = $request->query->get('campus');
+        $filtreMot = $request->query->get('nom_sortie_contient');
 
         $sorties = $paginator->paginate(
-            $sortieRepository->findListOfSortiesWithCampus($filtreCampus),
+            $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot),
             $request->query->getInt('page', 1),
             5
         );
