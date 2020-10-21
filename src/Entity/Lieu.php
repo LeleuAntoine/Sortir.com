@@ -43,9 +43,9 @@ class Lieu
     private $ville;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Sortie", mappedBy="lieux")
+     * @ORM\OneToMany(targetEntity="App\Entity\Sortie", mappedBy="lieu")
      */
-    private $sortie;
+    private $sorties;
 
     /**
      * @return mixed
@@ -138,17 +138,17 @@ class Lieu
     /**
      * @return mixed
      */
-    public function getSortie()
+    public function getSorties()
     {
-        return $this->sortie;
+        return $this->sorties;
     }
 
     /**
-     * @param mixed $sortie
+     * @param mixed $sorties
      */
-    public function setSortie($sortie): void
+    public function setSorties($sorties): void
     {
-        $this->sortie = $sortie;
+        $this->sorties = $sorties;
     }
 
     public function __toString(){

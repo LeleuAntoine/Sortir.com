@@ -6,10 +6,13 @@ use App\Entity\Campus;
 use App\Entity\Etat;
 use App\Entity\Lieu;
 use App\Entity\Participant;
+use App\Entity\Sortie;
 use App\Entity\Ville;
+use DateInterval;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\Constraints\Date;
 use function Symfony\Component\String\u;
 
 class AppFixtures extends Fixture
@@ -90,15 +93,16 @@ class AppFixtures extends Fixture
 
         $faker = \Faker\Factory::create('fr_FR');
 
+        $lieux = array();
         for ($i = 0; $i <= 12; $i++) {
-            $lieu = new Lieu();
-            $lieu->setNom($faker->sentence(6));
-            $lieu->setVille($villes[$faker->numberBetween(1, 4)]);
-            $lieu->setRue($faker->address);
-            $lieu->setLatitude($faker->latitude(46, 48));
-            $lieu->setLongitude($faker->longitude(-1, 4));
-            $lieu->setSortie(null);
-            $manager->persist($lieu);
+            $lieux[$i] = new Lieu();
+            $lieux[$i]->setNom($faker->sentence(6));
+            $lieux[$i]->setVille($villes[$faker->numberBetween(1, 4)]);
+            $lieux[$i]->setRue($faker->streetAddress);
+            $lieux[$i]->setLatitude($faker->latitude(46, 48));
+            $lieux[$i]->setLongitude($faker->longitude(-1, 4));
+            $lieux[$i]->setSorties(null);
+            $manager->persist($lieux[$i]);
         }
 
         $admin = new Participant();
@@ -117,19 +121,54 @@ class AppFixtures extends Fixture
 
         $manager->persist($admin);
 
+        $utilisateurs = array();
         for ($i = 1; $i <= 10; $i++) {
-            $utilisateur = new Participant();
-            $utilisateur->setUsername($faker->userName);
-            $utilisateur->setNom($faker->lastName);
-            $utilisateur->setPrenom($faker->firstName);
-            $utilisateur->setMail($faker->email);
-            $utilisateur->setCampus($campus[$faker->numberBetween(1, 4)]);
-            $utilisateur->setTelephone($faker->phoneNumber);
-            $utilisateur->setActif($faker->boolean(50));
-            $utilisateur->setPhoto($faker->imageUrl(200, 200, 'people'));
-            $utilisateur->setPassword($password);
-            $manager->persist($utilisateur);
+            $utilisateurs[$i] = new Participant();
+            $utilisateurs[$i]->setUsername($faker->userName);
+            $utilisateurs[$i]->setNom($faker->lastName);
+            $utilisateurs[$i]->setPrenom($faker->firstName);
+            $utilisateurs[$i]->setMail($faker->email);
+            $utilisateurs[$i]->setCampus($campus[$faker->numberBetween(1, 4)]);
+            $utilisateurs[$i]->setTelephone($faker->phoneNumber);
+            $utilisateurs[$i]->setActif($faker->boolean(50));
+            $utilisateurs[$i]->setPhoto($faker->imageUrl(200, 200, 'people'));
+            $utilisateurs[$i]->setPassword($password);
+            $manager->persist($utilisateurs[$i]);
         }
+
+        /*//sorties
+        for ($i = 1; $i <= 10; $i++) {
+            $sortie = new Sortie();
+            $sortie->setNom($faker->sentence(6));
+            $sortie->setDateHeureDebut($faker->dateTimeBetween('-1 month', '+1 month'));
+            $sortie->setDuree($faker->numberBetween(30, 120));
+            $sortie->setDateLimiteInscription($faker->dateTimeBetween('-1 month', $sortie->getDateHeureDebut()));
+            $sortie->setNbInscriptionMax($faker->numberBetween(5, 50));
+            $description = '<p>' . join($faker->paragraphs(3), '</p><p>') .'</p>';
+            $sortie->setInfosSortie($description);
+            $sortie->setOrganisateur($utilisateurs[$faker->numberBetween(1, 10)]);
+            $sortie->setParticipants(null);
+            $sortie->setSiteOrganisateur($campus[$faker->numberBetween(1, 4)]);
+            $sortie->setLieu($lieux[$faker->numberBetween(1, 12)]);
+
+            $now = new \DateTime();
+            try {
+                $duree = $now->add(new DateInterval('PT' . $sortie->getDuree() . 'M'));
+            } catch (\Exception $e) {
+            }
+            if($sortie->getDateLimiteInscription() > $now) {
+                $sortie->setEtat($etats[2]);
+            } elseif ($sortie->getDateLimiteInscription() < $now && $sortie->getDateHeureDebut() > $now) {
+                $sortie->setEtat($etats[3]);
+            } elseif ($sortie->getDateHeureDebut() < $now && $sortie->getDateHeureDebut() < $duree) {
+                $sortie->setEtat($etats[4]);
+            } else {
+                $sortie->setEtat($etats[5]);
+            }
+
+            $manager->persist($sortie);
+
+        }*/
 
         $manager->flush();
     }
