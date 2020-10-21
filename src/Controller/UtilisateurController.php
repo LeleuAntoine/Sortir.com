@@ -13,23 +13,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
+/**
+ * Class UtilisateurController
+ * @package App\Controller
+ * @Route("/profil")
+ */
 class UtilisateurController extends AbstractController
 {
     /**
-     * @Route("/connexion", name="app_participant_connexion")
-     */
-    public function seConnecter()
-    {
-        return $this->render('utilisateur/connexion.html.twig', []);
-    }
-
-    /**
-     * @Route("/deconnexion", name="app_participant_deconnexion")
-     */
-    public function seDeconnecter(){}
-
-    /**
-     * @Route("/profil/{id}", name="app_participant_voir_profil", requirements={"id": "\d+"})
+     * @Route("/{id}", name="app_participant_voir_profil", requirements={"id": "\d+"})
      */
     public function voirProfil($id, ParticipantRepository $participantRepository)
     {
@@ -41,7 +33,7 @@ class UtilisateurController extends AbstractController
     }
 
     /**
-     * @Route("/profil/{id}/modifier", name="app_participant_modifier_profil", requirements={"id": "\d+"})
+     * @Route("/{id}/modifier", name="app_participant_modifier_profil", requirements={"id": "\d+"})
      */
     public function modifierProfil(EntityManagerInterface $em, Request $request, Participant $utilisateur, UserPasswordEncoderInterface $encoder)
     {
