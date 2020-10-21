@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\CampusRepository;
@@ -51,22 +52,18 @@ class SortieController extends AbstractController
         $form = $this->createForm(SortieType::class);
         $form->handleRequest($request);
 
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $data = $form->getData();
-//            $sortie->setNom($data['nom']);
-//            $sortie->setOrganisateur($data['organisateur']);
-//            $sortie->setDateHeureDebut($data['dateHeureDebut']);
-//            $sortie->setDateLimiteInscription($data['dateLimiteInscription']);
-//            $sortie->setNbInscriptionMax($data['nbInscriptionMax']);
-//            $sortie->setDuree($data['duree']);
-//            $sortie->setInfosSortie($data['infosSortie']);
-//            $sortie->setLieux($data['lieux']);
-//            $sortie->setEtat($data['etat']);
-//            $em->persist($sortie);
-//            $em->flush();
-//
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+//            $lieu = $form->getData();
+//            $sortie->setLieux($lieu);
+            $sortie = $form->getData();
+//            $sortie->setLieux($data['lieu']);
+//            $sortie->setEtat(1);
+            $em->persist($sortie);
+            $em->flush();
+
 //            return $this->redirectToRoute('');
-//        }
+        }
         return $this->render('sortie/creer.html.twig', [
             'form' => $form->createView()
         ]);
