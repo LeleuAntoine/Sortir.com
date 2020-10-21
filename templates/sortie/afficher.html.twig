@@ -11,35 +11,42 @@
                 <p>Date limite d'inscription : {{ sortie.dateLimiteInscription | date('d/M/Y') }}</p>
                 <p>Nombre de places : {{ sortie.nbInscriptionMax }}</p>
                 <p>Durée : {{ sortie.duree }} minutes</p>
-                <p>Description et infos : {{ sortie.infosSortie }}</p>
+                <p>Description et infos : {{ sortie.infosSortie | raw }}</p>
             </div>
-{#            <div class="col-sm-6">#}
-{#                                <p>Campus : {{  }}</p>#}
-{#                                <p>Lieu: {{  }}</p>#}
-{#                                <p>Rue : {{  }}</p>#}
-{#                                <p>Code postal : {{  }}</p>#}
-{#                                <p>Latitude : {{  }}</p>#}
-{#                                <p>Longitude : {{  }}</p>#}
-{#            </div>#}
+            <div class="col-sm-6">
+                <p>Campus : {{ sortie.siteOrganisateur.nom }}</p>
+                <p>Lieu: {{ sortie.lieu.nom }}</p>
+                <p>Rue : {{ sortie.lieu.rue }}</p>
+                <p>Ville : {{ sortie.lieu.ville.nom }}</p>
+                <p>Code postal : {{ sortie.lieu.ville.codePostal }}</p>
+                <p>Latitude : {{ sortie.lieu.latitude }}</p>
+                <p>Longitude : {{ sortie.lieu.longitude }}</p>
+            </div>
         </div>
     </article>
 
-{#    <div class="d-flex flex-row">#}
-{#        <h3>Liste des participants inscrits :</h3>#}
-{#        <table>#}
-{#            <thead>#}
-{#            <tr>#}
-{#                <th>Pseudo</th>#}
-{#                <th>Nom</th>#}
-{#            </tr>#}
-{#            </thead>#}
-{#            <tbody>#}
-{#            <tr>#}
-{#                                <td>{{  }}</td>#}
-{#                                <td>{{  }}</td>#}
-{#            </tr>#}
-{#            </tbody>#}
-{#        </table>#}
-{#    </div>#}
-{#    <button><a href="{{ path('app_acceuil') }}">Acceuil</a></button>#}
+    <h3>Liste des participants inscrits :</h3>
+    <div class="d-flex flex-row">
+        {% if participants %}
+            <table>
+                <thead>
+                <tr>
+                    <th>Pseudo</th>
+                    <th>Nom</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for participant in participants %}
+                    <tr>
+                        <td>{{ participant.username }}</td>
+                        <td>{{ participant.prenom }} {{ participant.nom }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Aucun participant pour le moment.</p>
+        {% endif %}
+    </div>
+    <button><a href="{{ path('sortie') }}">Accueil</a></button>
 {% endblock %}
