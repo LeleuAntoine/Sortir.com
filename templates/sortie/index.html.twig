@@ -23,7 +23,7 @@
                             <div>
                                 <label for="nom_sortie_contient">
                                     Le nom de la sortie contient :
-                                    <input type="text"/>
+                                    <input type="text" id="nom_sortie_contient", name="nom_sortie_contient"/>
                                 </label>
                             </div>
                             <div>
@@ -123,6 +123,9 @@
                 </tbody>
             </table>
             {{ knp_pagination_render(sorties) }}
+            {% if sorties.totalItemCount == 0 %}
+                <p>Aucune sortie n'est prévue selon votre critères de recherches.</p>
+            {% endif %}
         </article>
     </div>
 {% endblock %}
