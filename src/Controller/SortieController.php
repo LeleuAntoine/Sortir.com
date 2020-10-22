@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\CampusRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -23,15 +24,25 @@ class SortieController extends AbstractController
     /**
      * @Route("/", name="sortie")
      */
-    public function index(SortieRepository $sortieRepository, CampusRepository $campusRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(SortieRepository $sortieRepository, CampusRepository $campusRepository, PaginatorInterface $paginator, Request $request, ParticipantRepository $participantRepository): Response
     {
         $campus = $campusRepository->findAll();
+        $user = $this->getUser();
+        $utilisateur = $participantRepository->findOneBy(['username' => $user->getUsername()]);
 
         $filtreCampus = $request->query->get('campus');
         $filtreMot = $request->query->get('nom_sortie_contient');
+        $filtrePeriode = "";
+        $checkOrganisateur = $request->query->get('sortie_organisateur');
+        if ($checkOrganisateur == 1) {
+            $filtreOrganisateur = $utilisateur;
+        } else {
+            $filtreOrganisateur = null;
+        }
+
 
         $sorties = $paginator->paginate(
-            $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot),
+            $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot, $filtreOrganisateur),
             $request->query->getInt('page', 1),
             5
         );

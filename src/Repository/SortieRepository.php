@@ -19,21 +19,22 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
-    public function findListOfSortiesWithFilters($campus = '', $mot = '')
+    public function findListOfSortiesWithFilters($campus = '', $mot = '', $organisateur = '')
     {
         $qb = $this->createQueryBuilder('s')
             ->addSelect('c');
-        if ($campus != '' and $mot != '') {
-            $qb->where('c = :campus')
-                ->setParameter('campus', $campus)
-                ->andWhere('lower(s.nom) LIKE lower(:mot)')
-                ->setParameter('mot', '%' . $mot . '%');
-
-        } else if ($mot != '') {
-            $qb->where('lower(s.nom) LIKE lower(:mot)')
+        if ($campus != '') {
+            $qb->andWhere('c = :campus')
+                ->setParameter('campus', $campus);
+        }
+        if ($mot != '') {
+            $qb->andWhere('lower(s.nom) LIKE lower(:mot)')
                 ->setParameter('mot', '%' . $mot . '%');
         }
-
+        if ($organisateur != '') {
+            $qb->andWhere('s.organisateur = :organisateur')
+                ->setParameter('organisateur', $organisateur->getId());
+        }
         $qb->join('s.siteOrganisateur', 'c')
             ->orderBy('s.dateHeureDebut', 'ASC')
         ;
