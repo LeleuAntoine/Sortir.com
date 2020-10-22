@@ -22,7 +22,7 @@ class ModifierProfilType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                /*'label' => 'Nom',*/
+                'label' => 'Nom',
             ])
             ->add('prenom', TextType::class, [
                 'label' => 'Prénom',

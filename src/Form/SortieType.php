@@ -21,6 +21,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SortieType extends AbstractType
 {
+    private $em;
+
+    /**
+     * @param EntityManagerInterface $em
+     */
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -45,88 +55,71 @@ class SortieType extends AbstractType
                 ['class' => Ville::class,
                     'placeholder' => 'Seletionnez votre ville',
                     'choice_label' => 'nom',
-                    'label' => 'Ville : ',
-                    'mapped' => false]);
+                    'label' => 'Ville : ']);
 
-        $builder->get('ville')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
-                $form = $event->getForm();
-                $this->ajoutLieu($form->getParent(), $form->getData());
-            }
-        );
 
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) {
-                $data = $event->getData();
-
-                /* @var $lieu Lieu */
-                $lieu = $data ? $data->getId() : null;
-                $form = $event->getForm();
-                if ($lieu) {
-                    $ville = $lieu->getVille();
-                    $this->ajoutLieu($form, $ville);
-                    $this->ajoutAutresChamps($form, $lieu);
-                    $form->get('ville')->setData($ville);
-                    $form->get('lieu')->setData($lieu);
-                } else {
-                    $this->ajoutLieu($form, null);
-                    $this->ajoutAutresChamps($form, null);
-                }
-            }
-        );
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
     }
 
-    /**
-     * Rajoute un champ lieu au formulaire
-     * @param FormInterface $form
-     * @param Ville $ville
-     */
-    private function ajoutLieu(FormInterface $form, ?Ville $ville)
+    protected function ajoutElement(FormInterface $form, ?Ville $ville, ?Lieu $lieu)
     {
-        $builder = $form->getConfig()->getFormFactory()->createNamedBuilder(
-            'lieu',
-            EntityType::class,
-            null,
-            [
-                'class' => 'App\Entity\Lieu',
-                'placeholder' => $ville ? 'Selectionner votre lieux' : 'Selectionnez la ville',
-                'mapped' => false,
-                'required' => false,
-                'auto_initialize' => false,
-                'choices' => $ville ? $ville->getLieux() : []
-            ]
-        );
-        $form->add('codePostal', EntityType::class, ['disabled' => true,
+        $form->add('codePostal', EntityType::class, [
+            'disabled' => true,
             'class' => Ville::class,
             'placeholder' => $ville ? $ville->getCodePostal() : '',
-            'label' => 'Code postal : ']);
-
-        $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
-                $form = $event->getForm();
-                $this->ajoutAutresChamps($form->getParent(), $form->getData());
-            }
-        );
-        $form->add($builder->getForm());
+            'label' => 'Code postal : ',
+            'mapped' => false,
+            'attr' => array('readonly' => true)])
+            ->add('lieu', EntityType::class, [
+                'class' => 'App\Entity\Lieu',
+                'placeholder' => $ville ? 'Selectionner votre lieux' : 'Selectionnez la ville',
+                'required' => false,
+                'auto_initialize' => false,
+                'choices' => $ville ? $ville->getLieux() : []])
+            ->add('rue', EntityType::class, [
+                'disabled' => true,
+                'class' => Lieu::class,
+                'placeholder' => $lieu ? $lieu->getRue() : '',
+                'label' => 'Rue : ',
+                'mapped' => false,
+                'attr' => array('readonly' => true)])
+            ->add('latitude', EntityType::class, [
+                'disabled' => true,
+                'class' => Lieu::class,
+                'placeholder' => $lieu ? $lieu->getLatitude() : '',
+                'label' => 'Latitude : ',
+                'mapped' => false,
+                'attr' => array('readonly' => true)])
+            ->add('longitude', EntityType::class, [
+                'disabled' => true,
+                'class' => Lieu::class,
+                'placeholder' => $lieu ? $lieu->getLongitude() : '',
+                'label' => 'Longitude : ',
+                'mapped' => false,
+                'attr' => array('readonly' => true)]);
     }
 
-    private function ajoutAutresChamps(FormInterface $form, ?Lieu $lieu)
+    function onPreSubmit(FormEvent $event)
     {
-        $form->add('rue', EntityType::class, ['disabled' => true,
-            'class' => Lieu::class,
-            'placeholder' => $lieu ? $lieu->getRue() : '',
-            'label' => 'Rue : '])
-            ->add('latitude', EntityType::class, ['disabled' => true,
-                'class' => Lieu::class,
-                'placeholder' =>  $lieu ? $lieu->getLatitude() : '',
-                'label' => 'Latitude : '])
-            ->add('longitude', EntityType::class, ['disabled' => true,
-                'class' => Lieu::class,
-                'placeholder' => $lieu ?  $lieu->getLongitude() : '',
-                'label' => 'Longitude : ']);
+        $form = $event->getForm();
+        $data = $event->getData();
+
+        $ville = $this->em->getRepository('App:Ville')->find($data['ville']);
+        $lieu = $this->em->getRepository('App:Lieu')->find($data['lieu']);
+
+        $this->ajoutElement($form, $ville, $lieu);
+    }
+
+    function onPreSetData(FormEvent $event)
+    {
+        $sortie = $event->getData();
+        $form = $event->getForm();
+
+        $ville = $sortie->getVille() ? $sortie->getVille() : null;
+        $lieu = $sortie->getLieu() ? $sortie->getLieu() : null;
+
+        $this->ajoutElement($form, $ville, $lieu);
     }
 
     public function configureOptions(OptionsResolver $resolver)
