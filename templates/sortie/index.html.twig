@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title 'Trouvez toutes les sorties organisées !' %}
+{% block title %} Trouvez toutes les sorties organisées !{% endblock %}
 
 {% block body %}
     <div class="container">
@@ -23,38 +23,38 @@
                             <div>
                                 <label for="nom_sortie_contient">
                                     Le nom de la sortie contient :
-                                    <input type="text" id="nom_sortie_contient", name="nom_sortie_contient"/>
+                                    <input type="text" id="nom_sortie_contient" name="nom_sortie_contient"/>
                                 </label>
                             </div>
                             <div>
                                 <label for="date_debut">
                                     Entre :
-                                    <input type="date" id="date_debut">
+                                    <input type="date" id="date_debut" name="date_debut">
                                 </label>
                                 <label for="date_fin">
                                     et
-                                    <input type="date" id="date_fin">
+                                    <input type="date" id="date_fin" name="date_fin">
                                 </label>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <label for="sortie_organisateur">
-                                <input type="checkbox" id="sortie_organisateur">
+                                <input type="checkbox" id="sortie_organisateur" name="sortie_organisateur">
                                 Sorties dont je suis l'organisateur/trice
                             </label>
                             <br>
                             <label for="sortie_inscrit">
-                                <input type="checkbox" id="sortie_inscrit">
+                                <input type="checkbox" id="sortie_inscrit" name="sortie_inscrit">
                                 Sorties auxquelles je suis inscrit/e
                             </label>
                             <br>
                             <label for="sortie_non_inscrit">
-                                <input type="checkbox" id="sortie_non_inscrit">
+                                <input type="checkbox" id="sortie_non_inscrit" name="sortie_non_inscrit">
                                 Sorties auxquelles je ne suis pas inscrit/e
                             </label>
                             <br>
                             <label for="sorties_passees">
-                                <input type="checkbox" id="sorties_passees">
+                                <input type="checkbox" id="sorties_passees" name="sorties_passees">
                                 Sorties passées
                             </label>
                         </div>
@@ -65,6 +65,7 @@
                 </fieldset>
             </form>
         </div>
+
         <article>
             <table class="table table-striped">
                 <thead>
@@ -101,7 +102,7 @@
                             TODO
                         </td>
                         <td>
-                            <a href="#">{{ sortie.organisateur.username }}</a>
+                            <a href="{{ path('app_participant_voir_profil', {id: sortie.organisateur.id }) }}">{{ sortie.organisateur.username }}</a>
                         </td>
                         <td>
                             <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher</a>
@@ -109,7 +110,9 @@
                                 {% if app.user.sortiesInscrits == sortie %}
                                     <a href="#">Se désister</a>
                                 {% else %}
-                                    <a href="#">S'inscrire</a>
+                                    {% if app.user != sortie.organisateur %}
+                                        <a href="#">S'inscrire</a>
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                             {% if app.user.username == sortie.organisateur.username %}
