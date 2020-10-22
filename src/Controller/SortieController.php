@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Form\SortieType;
-use App\Repository\CampusRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -13,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Class SortieController
@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SortieController extends AbstractController
 {
     /**
-     * @Route("/", name="sortie")
+     * @Route("/", name="app_sortie_index")
      */
     public function index(SortieRepository $sortieRepository, CampusRepository $campusRepository, PaginatorInterface $paginator, Request $request): Response
     {
@@ -46,24 +46,21 @@ class SortieController extends AbstractController
     /**
      * @Route ("/creer", name="app_sortie_creer", methods={"GET", "POST"})
      */
-    public function creer(Request $request, EntityManagerInterface $em): Response
+    public function creer(Request $request, EntityManagerInterface $em, Security $security, ParticipantRepository $participantRepository): Response
     {
         $sortie = new Sortie;
-
-        $form = $this->createForm(SortieType::class);
+        $user = $participantRepository->findOneBy(array('username' => $security->getUser()->getUsername()));
+        $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-//            $lieu = $form->getData();
-//            $sortie->setLieux($lieu);
             $sortie = $form->getData();
-//            $sortie->setLieux($data['lieu']);
 //            $sortie->setEtat(1);
+            $sortie->setOrganisateur($user);
             $em->persist($sortie);
             $em->flush();
 
-//            return $this->redirectToRoute('');
+            return $this->redirectToRoute('app_sortie_index');
         }
         return $this->render('sortie/creer.html.twig', [
             'form' => $form->createView()
