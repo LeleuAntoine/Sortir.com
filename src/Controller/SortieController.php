@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Sortie;
 use App\Form\SortieType;
 use App\Repository\CampusRepository;
+use App\Repository\EtatRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +25,7 @@ class SortieController extends AbstractController
     /**
      * @Route("/", name="sortie")
      */
-    public function index(SortieRepository $sortieRepository, CampusRepository $campusRepository, PaginatorInterface $paginator, Request $request, ParticipantRepository $participantRepository): Response
+    public function index(SortieRepository $sortieRepository, CampusRepository $campusRepository, EtatRepository $etatRepository, PaginatorInterface $paginator, Request $request, ParticipantRepository $participantRepository): Response
     {
         $campus = $campusRepository->findAll();
         $user = $this->getUser();
@@ -32,7 +33,17 @@ class SortieController extends AbstractController
 
         $filtreCampus = $request->query->get('campus');
         $filtreMot = $request->query->get('nom_sortie_contient');
-        $filtrePeriode = "";
+        $debutPeriode = strtotime($request->query->get('date_debut'));
+        $finPeriode = strtotime($request->query->get('date_fin'));
+        if ($debutPeriode and $finPeriode) {
+            $dateDebut = date('Y-m-d 00:00:00', $debutPeriode);
+            $dateFin = date('Y-m-d 00:00:00', $finPeriode);
+            var_dump($dateDebut);
+            var_dump($dateFin);
+        } else {
+            $dateDebut = null;
+            $dateFin = null;
+        }
         $checkOrganisateur = $request->query->get('sortie_organisateur');
         if ($checkOrganisateur) {
             $filtreOrganisateur = $utilisateur;
@@ -41,13 +52,15 @@ class SortieController extends AbstractController
         }
         $checkSortiePassee = $request->query->get('sorties_passees');
         if ($checkSortiePassee) {
-            
+            $filtreSortiePassee = $etatRepository->findOneBy(['libelle' => 'Passée']);
+        } else {
+            $filtreSortiePassee = null;
         }
 
 
 
         $sorties = $paginator->paginate(
-            $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot, $filtreOrganisateur),
+            $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot, $dateDebut, $dateFin, $filtreOrganisateur, $filtreSortiePassee),
             $request->query->getInt('page', 1),
             5
         );
