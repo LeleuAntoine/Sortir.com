@@ -5,8 +5,8 @@
 {% block body %}
     <div class="container">
     <h1>Toutes les sorties</h1>
-    {% for sortie in sorties %}
         <article>
+    {% for sortie in sorties %}
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -26,9 +26,9 @@
                     <td>{{ sortie.dateHeureDebut | date('d/M/Y H:m') }}</td>
                     <td>{{ sortie.dateLimiteInscription | date('d/M/Y') }}</td>
                     <td>Nb / {{ sortie.nbInscriptionMax }}</td>
-                    {# <td>{{ sortie.etat }}</td> #}
-                    {# <td>{{ inscrit ? }}</td> #}
-                    {# <td><a href="#">{{ sortie.organisateur }}</a></td> #}
+                     <td>{{ sortie.etat }}</td>
+{#                     <td>{{ inscrit ? }}</td>#}
+{#                     <td><a href="#">{{ sortie.organisateur.getNom }}</a></td>#}
                     <td><a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher - </a><a href="#">Se
                             désister</a>
                         <a href="#">S'inscrire</a><a href="{{path('app_sortie_modifier', {id: sortie.id})}}">Modifier - </a>
