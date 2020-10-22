@@ -50,7 +50,13 @@ class SortieType extends AbstractType
                 ['class' => Campus::class,
                     'choice_label' => 'nom',
                     'label' => 'Campus : ',
-                    'mapped' => false]);
+                    'mapped' => false])
+            ->add('ville', EntityType::class,
+                ['class' => Ville::class,
+                    'placeholder' => 'Seletionnez votre ville',
+                    'choice_label' => 'nom',
+                    'label' => 'Ville : ']);
+
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
@@ -58,13 +64,6 @@ class SortieType extends AbstractType
 
     protected function ajoutElement(FormInterface $form, ?Ville $ville, ?Lieu $lieu)
     {
-        $form->add('ville', EntityType::class,
-            ['class' => Ville::class,
-                'placeholder' => 'Seletionnez votre ville',
-                'choice_label' => 'nom',
-                'label' => 'Ville : ',
-                'mapped' => false]);
-
         $form->add('codePostal', EntityType::class, [
             'disabled' => true,
             'class' => Ville::class,
@@ -72,14 +71,12 @@ class SortieType extends AbstractType
             'label' => 'Code postal : ',
             'mapped' => false,
             'attr' => array('readonly' => true)])
-            ->add('lieu',
-                EntityType::class,
-                ['class' => 'App\Entity\Lieu',
-                    'placeholder' => $ville ? 'Selectionner votre lieux' : 'Selectionnez la ville',
-                    'mapped' => false,
-                    'required' => false,
-                    'auto_initialize' => false,
-                    'choices' => $ville ? $ville->getLieux() : []])
+            ->add('lieu', EntityType::class, [
+                'class' => 'App\Entity\Lieu',
+                'placeholder' => $ville ? 'Selectionner votre lieux' : 'Selectionnez la ville',
+                'required' => false,
+                'auto_initialize' => false,
+                'choices' => $ville ? $ville->getLieux() : []])
             ->add('rue', EntityType::class, [
                 'disabled' => true,
                 'class' => Lieu::class,
@@ -101,8 +98,6 @@ class SortieType extends AbstractType
                 'label' => 'Longitude : ',
                 'mapped' => false,
                 'attr' => array('readonly' => true)]);
-
-
     }
 
     function onPreSubmit(FormEvent $event)
@@ -113,17 +108,16 @@ class SortieType extends AbstractType
         $ville = $this->em->getRepository('App:Ville')->find($data['ville']);
         $lieu = $this->em->getRepository('App:Lieu')->find($data['lieu']);
 
-
         $this->ajoutElement($form, $ville, $lieu);
     }
 
     function onPreSetData(FormEvent $event)
     {
+        $sortie = $event->getData();
         $form = $event->getForm();
 
-        $ville = null;
-        $lieu = null;
-
+        $ville = $sortie->getVille() ? $sortie->getVille() : null;
+        $lieu = $sortie->getLieu() ? $sortie->getLieu() : null;
 
         $this->ajoutElement($form, $ville, $lieu);
     }
