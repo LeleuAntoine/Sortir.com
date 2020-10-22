@@ -5,12 +5,16 @@ namespace App\Controller;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Form\SortieType;
+use App\Repository\CampusRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\User;
 
 /**
  * Class SortieController
@@ -31,20 +35,17 @@ class SortieController extends AbstractController
     /**
      * @Route ("/creer", name="app_sortie_creer", methods={"GET", "POST"})
      */
-    public function creer(Request $request, EntityManagerInterface $em): Response
+    public function creer(Request $request, EntityManagerInterface $em, Security $security, ParticipantRepository $participantRepository): Response
     {
         $sortie = new Sortie;
-
+        $user = $participantRepository->findOneBy(array('username' => $security->getUser()->getUsername()));
         $form = $this->createForm(SortieType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-//            $lieu = $form->getData();
-//            $sortie->setLieux($lieu);
             $sortie = $form->getData();
-//            $sortie->setLieux($data['lieu']);
 //            $sortie->setEtat(1);
+            $sortie->setOrganisateur($user);
             $em->persist($sortie);
             $em->flush();
 

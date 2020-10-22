@@ -41,7 +41,7 @@ $(document).on('change', '#sortie_ville, #sortie_lieu', function () {
 
         $input = $(data).find(target5)
         $(target5).replaceWith($input)
-
+    console($lieuField)
     })
 })
 
