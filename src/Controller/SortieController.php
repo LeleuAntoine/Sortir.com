@@ -34,11 +34,16 @@ class SortieController extends AbstractController
         $filtreMot = $request->query->get('nom_sortie_contient');
         $filtrePeriode = "";
         $checkOrganisateur = $request->query->get('sortie_organisateur');
-        if ($checkOrganisateur == 1) {
+        if ($checkOrganisateur) {
             $filtreOrganisateur = $utilisateur;
         } else {
             $filtreOrganisateur = null;
         }
+        $checkSortiePassee = $request->query->get('sorties_passees');
+        if ($checkSortiePassee) {
+            
+        }
+
 
 
         $sorties = $paginator->paginate(
