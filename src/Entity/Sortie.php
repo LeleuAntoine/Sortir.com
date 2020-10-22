@@ -63,9 +63,14 @@ class Sortie
     private $siteOrganisateur;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Lieu", inversedBy="sortie")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Ville", inversedBy="sortiesEnVille")
      */
-    private $lieux;
+    private $ville;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Lieu", inversedBy="sorties")
+     */
+    private $lieu;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Etat", inversedBy="sorties")
@@ -224,17 +229,33 @@ class Sortie
     /**
      * @return mixed
      */
-    public function getLieux()
+    public function getVille()
     {
-        return $this->lieux;
+        return $this->ville;
     }
 
     /**
-     * @param mixed $lieux
+     * @param mixed $ville
      */
-    public function setLieux($lieux): void
+    public function setVille($ville): void
     {
-        $this->lieux = $lieux;
+        $this->ville = $ville;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLieu()
+    {
+        return $this->lieu;
+    }
+
+    /**
+     * @param mixed $lieu
+     */
+    public function setLieu($lieu): void
+    {
+        $this->lieu = $lieu;
     }
 
     /**

@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Campus;
 use App\Entity\Participant;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -20,7 +22,7 @@ class ModifierProfilType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
-                /*'label' => 'Nom',*/
+                'label' => 'Nom',
             ])
             ->add('prenom', TextType::class, [
                 'label' => 'Prénom',
@@ -55,7 +57,8 @@ class ModifierProfilType extends AbstractType
                 ],
                 'attr' => ['::after' => 'Choisir une photo']
             ])
-            ->add('campus', null, [
+            ->add('campus', EntityType::class, [
+                'class' => Campus::class,
                 'label' => 'Campus',
                 'choice_label' => 'nom',
             ])

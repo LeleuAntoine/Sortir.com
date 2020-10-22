@@ -7,6 +7,7 @@ use App\Form\SortieType;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,10 +24,23 @@ class SortieController extends AbstractController
     /**
      * @Route("/", name="app_sortie_index")
      */
-    public function index(SortieRepository $sortieRepository): Response
+    public function index(SortieRepository $sortieRepository, CampusRepository $campusRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        $sorties = $sortieRepository->findBy([], ['dateHeureDebut' => 'DESC']);
-        return $this->render('sortie/index.html.twig', ['sorties' => $sorties]);
+        $campus = $campusRepository->findAll();
+
+        $filtreCampus = $request->query->get('campus');
+        $filtreMot = $request->query->get('nom_sortie_contient');
+
+        $sorties = $paginator->paginate(
+            $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot),
+            $request->query->getInt('page', 1),
+            5
+        );
+
+        return $this->render('sortie/index.html.twig', [
+            'campus' => $campus,
+            'sorties' => $sorties,
+        ]);
     }
 
     /**
@@ -87,9 +101,15 @@ class SortieController extends AbstractController
     /**
      * @Route("/{id<[0-9]+>}", name="app_sortie_afficher", methods={"GET"})
      */
-    public function afficher(Sortie $sortie): Response
+    public function afficher($id, SortieRepository $sortieRepository): Response
     {
-        return $this->render('sortie/afficher.html.twig', compact('sortie'));
+        $sortie = $sortieRepository->find($id);
+        $participants = $sortieRepository->findParticipants($id);
+
+        return $this->render('sortie/afficher.html.twig', [
+            'sortie' => $sortie,
+            'participants' => $participants,
+        ]);
     }
 
 }

@@ -32,6 +32,11 @@ class Ville
      */
     private $lieux;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Sortie", mappedBy="ville")
+     */
+    private $sortiesEnVille;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -85,7 +90,20 @@ class Ville
         $this->lieux = $lieux;
     }
 
-    public function __toString(){
-        return $this->nom;
+    /**
+     * @return mixed
+     */
+    public function getSortiesEnVille()
+    {
+        return $this->sortiesEnVille;
     }
+
+    /**
+     * @param mixed $sortiesEnVille
+     */
+    public function setSortiesEnVille($sortiesEnVille): void
+    {
+        $this->sortiesEnVille = $sortiesEnVille;
+    }
+
 }
