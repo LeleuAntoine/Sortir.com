@@ -40,13 +40,13 @@ class SortieType extends AbstractType
             ->add('dateHeureDebut', DateTimeType::class,
                 ['label' => 'Date et heure de la sortie : ',
                     'model_timezone' => 'Europe/Paris',
-                    'widget'=>'choice',
-                    'years'=> range(date('Y'), date('y')+2001)])
+                    'widget' => 'choice',
+                    'years' => range(date('Y'), date('y') + 2001)])
             ->add('dateLimiteInscription', DateTimeType::class,
                 ['label' => 'Date limite d inscription : ',
                     'model_timezone' => 'Europe/Paris',
-                    'widget'=>'choice',
-                    'years'=> range(date('Y'), date('y')+2001)])
+                    'widget' => 'choice',
+                    'years' => range(date('Y'), date('y') + 2001)])
             ->add('nbInscriptionMax', IntegerType::class,
                 ['label' => 'Nombre de places : '])
             ->add('duree', IntegerType::class,

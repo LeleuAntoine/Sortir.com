@@ -38,7 +38,7 @@ class ModifierProfilType extends AbstractType
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les mots de passe ne sont pas identiques',
                 'required' => true,
-                'first_options'  => ['label' => 'Mot de passe'],
+                'first_options' => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Confirmation mot de passe'],
             ])
             ->add('photo', FileType::class, [
@@ -61,8 +61,7 @@ class ModifierProfilType extends AbstractType
                 'class' => Campus::class,
                 'label' => 'Campus',
                 'choice_label' => 'nom',
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

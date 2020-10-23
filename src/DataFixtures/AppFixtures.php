@@ -48,7 +48,7 @@ class AppFixtures extends Fixture
         }
 
         $campus = array();
-        for ($i = 1; $i <=4; $i++) {
+        for ($i = 1; $i <= 4; $i++) {
             $campus[$i] = new Campus();
             switch ($i) {
                 case 1:

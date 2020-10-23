@@ -112,7 +112,8 @@ class Ville
         $this->sortiesEnVille = $sortiesEnVille;
     }
 
-    public function __toString(){
+    public function __toString()
+    {
         return $this->nom;
     }
 

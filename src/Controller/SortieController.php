@@ -68,7 +68,6 @@ class SortieController extends AbstractController
         }
 
 
-
         $sorties = $paginator->paginate(
             $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot, $dateDebut, $dateFin, $filtreOrganisateur, $filtreSortiePassee),
             $request->query->getInt('page', 1),

@@ -315,9 +315,13 @@ class Participant implements UserInterface
         $this->sortiesInscrits = $sortiesInscrits;
     }
 
-    public function getSalt() {}
+    public function getSalt()
+    {
+    }
 
-    public function eraseCredentials() {}
+    public function eraseCredentials()
+    {
+    }
 
 
 }

@@ -47,8 +47,7 @@ class SortieRepository extends ServiceEntityRepository
                 ->setParameter('passee', $sortiePassee->getId());
         }
         $qb->join('s.siteOrganisateur', 'c')
-            ->orderBy('s.dateHeureDebut', 'ASC')
-        ;
+            ->orderBy('s.dateHeureDebut', 'ASC');
 
         return $qb;
     }
@@ -61,7 +60,6 @@ class SortieRepository extends ServiceEntityRepository
             ->setParameter('id', $id)
             ->join('s.participants', 'p')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }

@@ -157,7 +157,8 @@ class Lieu
         $this->sorties = $sorties;
     }
 
-    public function __toString(){
+    public function __toString()
+    {
         return $this->nom;
     }
 }

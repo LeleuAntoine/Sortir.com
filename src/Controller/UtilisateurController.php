@@ -45,10 +45,10 @@ class UtilisateurController extends AbstractController
             $photoFile = $profilForm['photo']->getData();
 
             if ($photoFile) {
-                $destination = $this->getParameter('kernel.project_dir').'/public/uploads/photo_participants';
+                $destination = $this->getParameter('kernel.project_dir') . '/public/uploads/photo_participants';
 
                 $nomPhotoOriginal = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $nouveauNomPhoto = Urlizer::urlize($nomPhotoOriginal).'-'.uniqid().'.'.$photoFile->guessExtension();
+                $nouveauNomPhoto = Urlizer::urlize($nomPhotoOriginal) . '-' . uniqid() . '.' . $photoFile->guessExtension();
 
                 $photoFile->move($destination, $nouveauNomPhoto);
             } else {
