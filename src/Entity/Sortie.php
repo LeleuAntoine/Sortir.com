@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SortieRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SortieRepository::class)
@@ -24,6 +25,9 @@ class Sortie
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Range(
+     *     min="now"
+     * )
      */
     private $dateHeureDebut;
 
@@ -34,6 +38,9 @@ class Sortie
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Range(
+     *     min="now"
+     * )
      */
     private $dateLimiteInscription;
 

@@ -59,18 +59,20 @@ class SortieController extends AbstractController
     public function creer(Request $request, EtatRepository $etatRepository): Response
     {
         $sortie = new Sortie;
+        $participant = $this->getUser();
+
+        $sortie->setDateHeureDebut(new \DateTime('now'));
+        $sortie->setDateLimiteInscription(new \DateTime('now'));
+        $sortie->setSiteOrganisateur($participant->getCampus());
 
         $etat = $etatRepository->findOneBy(array('libelle' => 'Créée'));
-        $participant = $this->getUser();
 
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $sortie->setOrganisateur($participant);
-            $sortie->setSiteOrganisateur($participant->getCampus());
             $sortie->setEtat($etat);
-            $this->em->persist($sortie);
             $this->em->flush();
 
             return $this->redirectToRoute('app_sortie_index');
@@ -81,29 +83,27 @@ class SortieController extends AbstractController
     }
 
     /**
-     * @Route ("/modifier", name="app_sortie_modifier", methods={"GET", "POST"})
+     * @Route ("/modifier/{id<[0-9]+>}", name="app_sortie_modifier")
      */
-    public function modifier(Request $request, EtatRepository $etatRepository): Response
+    public function modifier(Request $request, EtatRepository $etatRepository, SortieRepository $sortieRepository, $id): Response
     {
-//        $sortie = $sortieRepository->find($id);
-//        $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
-//        $participant = $this->getUser();
-//
-//        $form = $this->createForm(SortieType::class, $sortie);
-//        $form->handleRequest($request);
-//
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $sortie->setOrganisateur($participant);
-//            $sortie->setSiteOrganisateur($participant->getCampus());
-//            $sortie->setEtat($etat);
-//            $this->em->persist($sortie);
-//            $this->em->flush();
-//
-//            return $this->redirectToRoute('app_sortie_index');
-//        }
-//        return $this->render('sortie/creer.html.twig', [
-//            'form' => $form->createView()
-//        ]);
+        $sortie = $sortieRepository->find($id);
+        $participant = $this->getUser();
+
+        $form = $this->createForm(SortieType::class, $sortie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $sortie->setOrganisateur($participant);
+            $sortie->setSiteOrganisateur($participant->getCampus());
+            $this->em->persist($sortie);
+            $this->em->flush();
+
+            return $this->redirectToRoute('app_sortie_index');
+        }
+        return $this->render('sortie/modifier.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     /**

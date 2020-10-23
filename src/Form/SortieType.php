@@ -6,6 +6,7 @@ use App\Entity\Campus;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Ville;
+use App\Repository\CampusRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -35,28 +36,33 @@ class SortieType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class,
-                ['label' => 'Nom de la sortie : '])
+                ['label' => 'Nom de la sortie : ',])
             ->add('dateHeureDebut', DateTimeType::class,
-                ['label' => 'Date et heure de la sortie : '])
+                ['label' => 'Date et heure de la sortie : ',
+                    'model_timezone' => 'Europe/Paris',
+                    'widget'=>'choice',
+                    'years'=> range(date('Y'), date('y')+2001)])
             ->add('dateLimiteInscription', DateTimeType::class,
-                ['label' => 'Date limite d inscription : '])
+                ['label' => 'Date limite d inscription : ',
+                    'model_timezone' => 'Europe/Paris',
+                    'widget'=>'choice',
+                    'years'=> range(date('Y'), date('y')+2001)])
             ->add('nbInscriptionMax', IntegerType::class,
                 ['label' => 'Nombre de places : '])
             ->add('duree', IntegerType::class,
                 ['label' => 'Duree : '])
             ->add('infosSortie', TextareaType::class,
                 ['label' => 'Description et infos : '])
-            ->add('campus', EntityType::class,
+            ->add('siteOrganisateur', EntityType::class,
                 ['class' => Campus::class,
                     'choice_label' => 'nom',
                     'label' => 'Campus : ',
-                    'mapped' => false])
+                    'disabled' => true])
             ->add('ville', EntityType::class,
                 ['class' => Ville::class,
                     'placeholder' => 'Seletionnez votre ville',
                     'choice_label' => 'nom',
                     'label' => 'Ville : ']);
-
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
