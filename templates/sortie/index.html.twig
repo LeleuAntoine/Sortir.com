@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Trouvez toutes les sorties organisées !{% endblock %}
+{% block title %}Sorties organisées{% endblock %}
 
 {% block body %}
     <div class="container">
@@ -116,9 +116,7 @@
             {% endif %}
         </article>
         <div>
-            <a href="{{ path('app_sortie_creer') }}">
-                <button type="submit" class="btn btn-primary">Créer une sortie</button>
-            </a>
+            <a href="{{ path('app_sortie_creer') }}" class="btn btn-primary">Créer une sortie</a>
         </div>
     </div>
 {% endblock %}

@@ -127,7 +127,6 @@ class SortieController extends AbstractController
             $sortie->setSiteOrganisateur($participant->getCampus());
             $this->em->persist($sortie);
             $this->em->flush();
-
             return $this->redirectToRoute('app_sortie_index');
         }
         return $this->render('sortie/modifier.html.twig', [

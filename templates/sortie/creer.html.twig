@@ -4,6 +4,7 @@
 
 {% block body %}
     <div class="container">
+        <h2 class="d-flex justify-content-center">Créer une sortie</h2>
         <div class="col-sm-12">
             {{ form_start(form) }}
             <div class="d-flex justify-content-between">
@@ -27,8 +28,10 @@
             </div>
         </div>
     </div>
-    <div class="container">
-            <button type="submit" class="btn btn-success">Créer la sortie</button>
+    <div class="d-flex justify-content-around">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <button type="submit" class="btn btn-success">Publier la sortie</button>
+        <button type="reset" class="btn btn-warning">Annuler</button>
     </div>
     {{ form_end(form) }}
 

@@ -2,10 +2,7 @@
 
 {% block body %}
     <h1>{{ profil.username }}</h1>
-    {% if profil.username == app.user.username %}
-        <button><a href="{{ path('app_participant_modifier_profil', {id: profil.id}) }}">Modifier mon profil</a></button>
-    {% endif %}
-    <div class="row">
+    <div class="d-flex justify-content-between">
         {% if profil.photo != null %}
             <div class="col-4">
                 <img class="img" src="{{ asset('uploads/photo_participants/' ~ profil.photo) }}" alt="{{ profil.username }}"/>
@@ -19,7 +16,9 @@
             <p class="row">Campus : {{ profil.campus.nom }}</p>
         </div>
     </div>
-    {% for sortie in profil.sortiesOrganisees %}
-        {{ sortie.nom }}
-    {% endfor %}
+    <div class="d-flex justify-content-center">
+    {% if profil.username == app.user.username %}
+        <button class="btn btn-warning"><a href="{{ path('app_participant_modifier_profil', {id: profil.id}) }}">Modifier mon profil</a></button>
+    {% endif %}
+    </div>
 {% endblock %}
