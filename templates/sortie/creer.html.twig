@@ -3,10 +3,12 @@
 {% block title %}Créer une sortie{% endblock %}
 
 {% block body %}
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
     <div class="container">
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button type="submit" class="btn btn-succes">Publier la sortie</button>
-        {{ form_end(form) }}
+            <button type="submit" class="btn btn-success">Créer la sortie</button>
     </div>
+    {{ form_end(form) }}
+
 {% endblock %}

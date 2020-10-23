@@ -5,62 +5,49 @@
 {% block body %}
     <div class="container">
         <h1>Toutes les sorties</h1>
-        <div>
+        <div class="col-sm-12">
             <form method="get">
-                <fieldset class="container">
+                <fieldset>
                     <legend>Filtres</legend>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div>
-                                <label for="campus">Campus :</label>
-                                <select name="campus" id="campus">
+                    <div class="d-flex justify-content-between">
+                        <div class="form-group">
+                            <div class="form-inline d-flex justify-content-between">
+                                <label for="campus">Campus : </label>
+                                <select class="form-control" name="campus" id="campus">
                                     <option value="">Tous</option>
                                     {% for c in campus %}
                                         <option value="{{ c.id }}">{{ c.nom }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div>
-                                <label for="nom_sortie_contient">
-                                    Le nom de la sortie contient :
-                                    <input type="text" id="nom_sortie_contient" name="nom_sortie_contient"/>
-                                </label>
+                            <div class="form-inline d-flex justify-content-between">
+                                <label for="nom_sortie_contient">Le nom de la sortie contient : </label>
+                                <input class="form-control" type="text" id="nom_sortie_contient"
+                                       name="nom_sortie_contient"/>
                             </div>
-                            <div>
-                                <label for="date_debut">
-                                    Entre :
-                                    <input type="date" id="date_debut" name="date_debut">
-                                </label>
-                                <label for="date_fin">
-                                    et
-                                    <input type="date" id="date_fin" name="date_fin">
-                                </label>
+                            <div class="form-inline d-flex justify-content-between">
+                                <label for="date_debut">Entre :</label>
+                                <input class="form-control" type="datetime-local" id="date_debut">
+                                <label for="date_fin">et</label>
+                                <input class="form-control" type="datetime-local" id="date_fin">
                             </div>
                         </div>
-                        <div class="col-sm-6">
-                            <label for="sortie_organisateur">
-                                <input type="checkbox" id="sortie_organisateur" name="sortie_organisateur">
-                                Sorties dont je suis l'organisateur/trice
-                            </label>
+                        <div class="form-group">
+                            <label for="sortie_organisateur">Sorties dont je suis l'organisateur/trice </label>
+                            <input type="checkbox" id="sortie_organisateur">
                             <br>
-                            <label for="sortie_inscrit">
-                                <input type="checkbox" id="sortie_inscrit" name="sortie_inscrit">
-                                Sorties auxquelles je suis inscrit/e
-                            </label>
+                            <label for="sortie_inscrit">Sorties auxquelles je suis inscrit/e </label>
+                            <input type="checkbox" id="sortie_inscrit">
                             <br>
-                            <label for="sortie_non_inscrit">
-                                <input type="checkbox" id="sortie_non_inscrit" name="sortie_non_inscrit">
-                                Sorties auxquelles je ne suis pas inscrit/e
-                            </label>
+                            <label for="sortie_non_inscrit">Sorties auxquelles je ne suis pas inscrit/e </label>
+                            <input type="checkbox" id="sortie_non_inscrit">
                             <br>
-                            <label for="sorties_passees">
-                                <input type="checkbox" id="sorties_passees" name="sorties_passees">
-                                Sorties passées
-                            </label>
+                            <label for="sorties_passees">Sorties passées </label>
+                            <input type="checkbox" id="sorties_passees">
                         </div>
-                    </div>
-                    <div>
-                        <button type="submit">Filtrer ma recherche</button>
+                        <div class="form-group align-self-center">
+                            <button type="submit" class="btn btn-primary">Filtrer ma recherche</button>
+                        </div>
                     </div>
                 </fieldset>
             </form>
@@ -116,7 +103,7 @@
                                 {% endif %}
                             {% endif %}
                             {% if app.user.username == sortie.organisateur.username %}
-                                <a href="{{path('app_sortie_modifier', {id: sortie.id})}}">Modifier</a>
+                                <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}">Modifier</a>
                                 <a href="#">Publier</a>
                                 <a href="#">Annuler</a>
                             {% endif %}
@@ -130,5 +117,10 @@
                 <p>Aucune sortie n'est prévue selon votre critères de recherches.</p>
             {% endif %}
         </article>
+        <div>
+            <a href="{{ path('app_sortie_creer') }}">
+                <button type="submit" class="btn btn-primary">Créer une sortie</button>
+            </a>
+        </div>
     </div>
 {% endblock %}
