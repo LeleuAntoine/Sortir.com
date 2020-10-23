@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\SortieRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -56,6 +57,11 @@ class Sortie
      * @ORM\ManyToMany(targetEntity="App\Entity\Participant", inversedBy="sortiesInscrits")
      */
     private $participants;
+
+    public function __construct()
+    {
+        $this->participants = new ArrayCollection();
+    }
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Campus", inversedBy="sortiesOrganisees")

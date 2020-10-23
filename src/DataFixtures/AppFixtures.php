@@ -114,7 +114,7 @@ class AppFixtures extends Fixture
         $admin->setCampus($campus[3]);
         $admin->setTelephone($faker->phoneNumber);
         $admin->setActif(true);
-        $admin->setPhoto($faker->imageUrl(200, 200, 'people'));
+        $admin->setPhoto('profile-picture-5f91a9bb0a4bf.png');
 
         $password = $this->encoder->encodePassword($admin, 'azerty');
         $admin->setPassword($password);
@@ -131,44 +131,10 @@ class AppFixtures extends Fixture
             $utilisateurs[$i]->setCampus($campus[$faker->numberBetween(1, 4)]);
             $utilisateurs[$i]->setTelephone($faker->phoneNumber);
             $utilisateurs[$i]->setActif($faker->boolean(50));
-            $utilisateurs[$i]->setPhoto($faker->imageUrl(200, 200, 'people'));
+            $utilisateurs[$i]->setPhoto('profile-picture-5f91a9bb0a4bf.png');
             $utilisateurs[$i]->setPassword($password);
             $manager->persist($utilisateurs[$i]);
         }
-
-        /*//sorties
-        for ($i = 1; $i <= 10; $i++) {
-            $sortie = new Sortie();
-            $sortie->setNom($faker->sentence(6));
-            $sortie->setDateHeureDebut($faker->dateTimeBetween('-1 month', '+1 month'));
-            $sortie->setDuree($faker->numberBetween(30, 120));
-            $sortie->setDateLimiteInscription($faker->dateTimeBetween('-1 month', $sortie->getDateHeureDebut()));
-            $sortie->setNbInscriptionMax($faker->numberBetween(5, 50));
-            $description = '<p>' . join($faker->paragraphs(3), '</p><p>') .'</p>';
-            $sortie->setInfosSortie($description);
-            $sortie->setOrganisateur($utilisateurs[$faker->numberBetween(1, 10)]);
-            $sortie->setParticipants(null);
-            $sortie->setSiteOrganisateur($campus[$faker->numberBetween(1, 4)]);
-            $sortie->setLieu($lieux[$faker->numberBetween(1, 12)]);
-
-            $now = new \DateTime();
-            try {
-                $duree = $now->add(new DateInterval('PT' . $sortie->getDuree() . 'M'));
-            } catch (\Exception $e) {
-            }
-            if($sortie->getDateLimiteInscription() > $now) {
-                $sortie->setEtat($etats[2]);
-            } elseif ($sortie->getDateLimiteInscription() < $now && $sortie->getDateHeureDebut() > $now) {
-                $sortie->setEtat($etats[3]);
-            } elseif ($sortie->getDateHeureDebut() < $now && $sortie->getDateHeureDebut() < $duree) {
-                $sortie->setEtat($etats[4]);
-            } else {
-                $sortie->setEtat($etats[5]);
-            }
-
-            $manager->persist($sortie);
-
-        }*/
 
         $manager->flush();
     }

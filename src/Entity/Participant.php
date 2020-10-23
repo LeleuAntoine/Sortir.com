@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ParticipantRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -103,6 +104,12 @@ class Participant implements UserInterface
      * @ORM\ManyToMany(targetEntity="App\Entity\Sortie", mappedBy="participants")
      */
     private $sortiesInscrits;
+
+    public function __construct()
+    {
+        $this->sortiesOrganisees = new ArrayCollection();
+        $this->sortiesInscrits = new ArrayCollection();
+    }
 
     /**
      * @return mixed

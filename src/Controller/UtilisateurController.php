@@ -51,9 +51,10 @@ class UtilisateurController extends AbstractController
                 $nouveauNomPhoto = Urlizer::urlize($nomPhotoOriginal).'-'.uniqid().'.'.$photoFile->guessExtension();
 
                 $photoFile->move($destination, $nouveauNomPhoto);
-
-                $utilisateur->setPhoto($nouveauNomPhoto);
+            } else {
+                $nouveauNomPhoto = 'profile-picture-5f91a9bb0a4bf.png';
             }
+            $utilisateur->setPhoto($nouveauNomPhoto);
 
             $hashed = $encoder->encodePassword($utilisateur, $utilisateur->getPassword());
             $utilisateur->setPassword($hashed);

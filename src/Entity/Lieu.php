@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\LieuRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -46,6 +47,11 @@ class Lieu
      * @ORM\OneToMany(targetEntity="App\Entity\Sortie", mappedBy="lieu")
      */
     private $sorties;
+
+    public function __construct()
+    {
+        $this->sorties = new ArrayCollection();
+    }
 
     /**
      * @return mixed

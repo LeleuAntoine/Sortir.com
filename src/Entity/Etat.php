@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\EtatRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -26,6 +27,11 @@ class Etat
      * @ORM\OneToMany(targetEntity="App\Entity\Sortie", mappedBy="etat")
      */
     private $sorties;
+
+    public function __construct()
+    {
+        $this->sorties = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
