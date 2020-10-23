@@ -8,7 +8,7 @@
     <div class="row">
         {% if profil.photo != null %}
             <div class="col-4">
-                <img class="img" src="{{ profil.photo }}" alt="{{ profil.username }}"/>
+                <img class="img" src="{{ asset('uploads/photo_participants/' ~ profil.photo) }}" alt="{{ profil.username }}"/>
             </div>
         {% endif%}
         <div class="col-6">
