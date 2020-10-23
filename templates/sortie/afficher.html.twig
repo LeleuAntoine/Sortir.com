@@ -27,7 +27,7 @@
 
     <h3>Liste des participants inscrits :</h3>
     <div class="d-flex flex-row">
-        {% if participants %}
+        {% if sortie.participants | length > 0%}
             <table>
                 <thead>
                 <tr>
@@ -36,7 +36,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for participant in participants %}
+                {% for participant in sortie.participants %}
                     <tr>
                         <td>{{ participant.username }}</td>
                         <td>{{ participant.prenom }} {{ participant.nom }}</td>

@@ -19,4 +19,7 @@
             <p class="row">Campus : {{ profil.campus.nom }}</p>
         </div>
     </div>
+    {% for sortie in profil.sortiesOrganisees %}
+        {{ sortie.nom }}
+    {% endfor %}
 {% endblock %}

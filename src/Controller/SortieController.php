@@ -78,6 +78,7 @@ class SortieController extends AbstractController
         return $this->render('sortie/index.html.twig', [
             'campus' => $campus,
             'sorties' => $sorties,
+            'utilisateur' => $utilisateur,
         ]);
     }
 
@@ -140,12 +141,47 @@ class SortieController extends AbstractController
     public function afficher($id, SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
-        $participants = $sortieRepository->findParticipants($id);
 
         return $this->render('sortie/afficher.html.twig', [
             'sortie' => $sortie,
-            'participants' => $participants,
         ]);
     }
 
+    /**
+     * @Route("/{id}/inscription", name="app_sortie_s_inscrire", requirements={"id": "\d+"})
+     */
+    public function sInscrire(Sortie $sortie, ParticipantRepository $participantRepository, EntityManagerInterface $em)
+    {
+        $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
+
+        $sortie->ajouterParticipant($participant);
+
+        $em->persist($sortie);
+        $em->flush();
+
+        $this->addFlash('success', 'Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
+        return $this->redirectToRoute('app_sortie_index');
+
+    }
+
+    /**
+     * @Route("/{id}/desinscription", name="app_sortie_se_desinscrire", requirements={"id": "\d+"})
+     */
+    public function seDesinscrire(Sortie $sortie, ParticipantRepository $participantRepository, EntityManagerInterface $em)
+    {
+        $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
+
+        if (!$sortie) {
+            throw $this->createNotFoundException('Sortie non trouvée');
+        }
+
+        $sortie->enleverParticipant($participant);
+
+        $em->persist($sortie);
+        $em->flush();
+
+        $this->addFlash('success', 'Vous êtes bien désinscrit à la sortie ' . $sortie->getNom());
+        return $this->redirectToRoute('app_sortie_index');
+
+    }
 }
