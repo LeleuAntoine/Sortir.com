@@ -9,9 +9,11 @@
     {% endif %}
 
     {% if app.user %}
-        <h1 class="mb-3">
-            Vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Se déconnecter</a>
-        </h1>
+        <h3 class="mb-3">
+            Vous êtes connecté en tant que {{ app.user.username }}
+        </h3>
+        <p>Vous allez être redirigé...</p>
+        <meta http-equiv="refresh" content="5;{{ path('app_sortie_index') }}">
     {% else %}
         <h1 class="h3 mb-3 font-weight-normal">Veuillez vous connecter</h1>
         <label for="inputUsername">Pseudo </label>
