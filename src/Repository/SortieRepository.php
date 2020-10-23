@@ -52,16 +52,4 @@ class SortieRepository extends ServiceEntityRepository
 
         return $qb;
     }
-
-    public function findParticipants($id)
-    {
-        return $qb = $this->createQueryBuilder('s')
-            ->addSelect('p')
-            ->where('s.id = :id')
-            ->setParameter('id', $id)
-            ->join('s.participants', 'p')
-            ->getQuery()
-            ->getResult()
-        ;
-    }
 }

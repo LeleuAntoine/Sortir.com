@@ -215,12 +215,24 @@ class Sortie
         return $this->participants;
     }
 
-    /**
-     * @param mixed $participants
-     */
-    public function setParticipants($participants): void
+
+
+    public function ajouterParticipant(Participant $participant)
     {
-        $this->participants = $participants;
+        if ($this->participants->contains($participant)) {
+            return;
+        }
+
+        $this->participants[] = $participant;
+    }
+
+    public function enleverParticipant(Participant $participant)
+    {
+        if (!$this->participants->contains($participant)) {
+            return;
+        }
+
+        $this->participants->removeElement($participant);
     }
 
     /**
