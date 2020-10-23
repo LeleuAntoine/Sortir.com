@@ -3,9 +3,30 @@
 {% block title %}Créer une sortie{% endblock %}
 
 {% block body %}
-
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
+    <div class="container">
+        <div class="col-sm-12">
+            {{ form_start(form) }}
+            <div class="d-flex justify-content-between">
+                <div class="form-group">
+                    {{ form_row(form.nom) }}
+                    {{ form_row(form.dateHeureDebut) }}
+                    {{ form_row(form.dateLimiteInscription) }}
+                    {{ form_row(form.nbInscriptionMax) }}
+                    {{ form_row(form.duree) }}
+                    {{ form_row(form.infosSortie) }}
+                </div>
+                <div class="form-group">
+                    {{ form_row(form.siteOrganisateur) }}
+                    {{ form_row(form.ville) }}
+                    {{ form_row(form.codePostal) }}
+                    {{ form_row(form.lieu) }}
+                    {{ form_row(form.rue) }}
+                    {{ form_row(form.latitude) }}
+                    {{ form_row(form.longitude) }}
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
             <button type="submit" class="btn btn-success">Créer la sortie</button>
     </div>

@@ -79,7 +79,7 @@ class SortieType extends AbstractType
             'attr' => array('readonly' => true)])
             ->add('lieu', EntityType::class, [
                 'class' => 'App\Entity\Lieu',
-                'placeholder' => $ville ? 'Selectionner votre lieux' : 'Selectionnez la ville',
+                'placeholder' => $ville ? 'Selectionner votre lieu' : 'Selectionnez la ville',
                 'required' => false,
                 'auto_initialize' => false,
                 'choices' => $ville ? $ville->getLieux() : []])
