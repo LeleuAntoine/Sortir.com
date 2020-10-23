@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title 'Trouvez toutes les sorties organisées !' %}
+{% block title %} Trouvez toutes les sorties organisées !{% endblock %}
 
 {% block body %}
     <div class="container">
@@ -52,6 +52,7 @@
                 </fieldset>
             </form>
         </div>
+
         <article>
             <table class="table table-striped">
                 <thead>
@@ -88,7 +89,7 @@
                             TODO
                         </td>
                         <td>
-                            <a href="#">{{ sortie.organisateur.username }}</a>
+                            <a href="{{ path('app_participant_voir_profil', {id: sortie.organisateur.id }) }}">{{ sortie.organisateur.username }}</a>
                         </td>
                         <td>
                             <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher</a>
@@ -96,7 +97,9 @@
                                 {% if app.user.sortiesInscrits == sortie %}
                                     <a href="#">Se désister</a>
                                 {% else %}
-                                    <a href="#">S'inscrire</a>
+                                    {% if app.user != sortie.organisateur %}
+                                        <a href="#">S'inscrire</a>
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                             {% if app.user.username == sortie.organisateur.username %}
