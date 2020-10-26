@@ -6,7 +6,6 @@ use App\Entity\Campus;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Ville;
-use App\Repository\CampusRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -81,7 +80,6 @@ class SortieType extends AbstractType
                 'class' => 'App\Entity\Lieu',
                 'placeholder' => $ville ? 'Selectionner votre lieu' : 'Selectionnez la ville',
                 'required' => false,
-                'auto_initialize' => false,
                 'choices' => $ville ? $ville->getLieux() : []])
             ->add('rue', EntityType::class, [
                 'disabled' => true,
