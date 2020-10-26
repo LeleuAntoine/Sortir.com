@@ -39,8 +39,7 @@ class UtilisateurController extends AbstractController
     public function modifierProfil(EntityManagerInterface $em, Request $request,
                                    Participant $participant, UserPasswordEncoderInterface $encoder)
     {
-        if ($participant->getUsername() === $this->getUser()->getUsername() or
-            in_array("ROLE_ADMIN", $participant->getRoles())) {
+        if ($participant->getUsername() === $this->getUser()->getUsername()) {
 
             $profilForm = $this->createForm(ModifierProfilType::class, $participant);
             $profilForm->handleRequest($request);
@@ -75,8 +74,7 @@ class UtilisateurController extends AbstractController
             ]);
         } else {
             $this->addFlash('erreur', 'Vous ne disposez pas des droits nécessaire !');
-            return new RedirectResponse('/sortie');
+            return $this->redirectToRoute('app_sortie_index');
         }
-
     }
 }

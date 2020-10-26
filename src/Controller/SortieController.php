@@ -135,7 +135,7 @@ class SortieController extends AbstractController
             }
         } else {
             $this->addFlash('erreur', 'Vous ne disposez pas des droits nécessaire !');
-            return new RedirectResponse('/sortie');
+            return $this->redirectToRoute('app_sortie_index');
         }
         return $this->render('sortie/modifier.html.twig', ['form' => $form->createView()]);
     }
@@ -155,7 +155,7 @@ class SortieController extends AbstractController
         }
         else{
             $this->addFlash('erreur', 'Visualisation impossible');
-            return new RedirectResponse('/sortie');
+            return $this->redirectToRoute('app_sortie_index');
         }
     }
 
