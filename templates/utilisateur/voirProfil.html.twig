@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>{{ profil.username }}</h1>
+    <h1 class="d-flex justify-content-center">{{ profil.username }}</h1>
     <div class="d-flex justify-content-between">
         {% if profil.photo != null %}
             <div class="col-4">

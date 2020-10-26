@@ -9,6 +9,7 @@ use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -35,39 +36,45 @@ class UtilisateurController extends AbstractController
     /**
      * @Route("/{id}/modifier", name="app_participant_modifier_profil", requirements={"id": "\d+"})
      */
-    public function modifierProfil(EntityManagerInterface $em, Request $request, Participant $utilisateur, UserPasswordEncoderInterface $encoder)
+    public function modifierProfil(EntityManagerInterface $em, Request $request,
+                                   Participant $participant, UserPasswordEncoderInterface $encoder)
     {
-        $profilForm = $this->createForm(ModifierProfilType::class, $utilisateur);
+        if ($participant->getUsername() === $this->getUser()->getUsername()) {
 
-        $profilForm->handleRequest($request);
+            $profilForm = $this->createForm(ModifierProfilType::class, $participant);
+            $profilForm->handleRequest($request);
 
-        if ($profilForm->isSubmitted() && $profilForm->isValid()) {
-            $photoFile = $profilForm['photo']->getData();
+            if ($profilForm->isSubmitted() && $profilForm->isValid()) {
+                $photoFile = $profilForm['photo']->getData();
 
-            if ($photoFile) {
-                $destination = $this->getParameter('kernel.project_dir') . '/public/uploads/photo_participants';
+                if ($photoFile) {
+                    $destination = $this->getParameter('kernel.project_dir') . '/public/uploads/photo_participants';
 
-                $nomPhotoOriginal = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $nouveauNomPhoto = Urlizer::urlize($nomPhotoOriginal) . '-' . uniqid() . '.' . $photoFile->guessExtension();
+                    $nomPhotoOriginal = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    $nouveauNomPhoto = Urlizer::urlize($nomPhotoOriginal) . '-' . uniqid() . '.' . $photoFile->guessExtension();
 
-                $photoFile->move($destination, $nouveauNomPhoto);
-            } else {
-                $nouveauNomPhoto = 'profile-picture-5f91a9bb0a4bf.png';
+                    $photoFile->move($destination, $nouveauNomPhoto);
+                } else {
+                    $nouveauNomPhoto = 'profile-picture-5f91a9bb0a4bf.png';
+                }
+                $participant->setPhoto($nouveauNomPhoto);
+
+                $hashed = $encoder->encodePassword($participant, $participant->getPassword());
+                $participant->setPassword($hashed);
+
+                $em->persist($participant);
+                $em->flush();
+
+                $this->addFlash('success', 'Votre profil a été modifié avec succès');
+                return $this->redirectToRoute('app_participant_voir_profil', ['id' => $participant->getId()]);
             }
-            $utilisateur->setPhoto($nouveauNomPhoto);
 
-            $hashed = $encoder->encodePassword($utilisateur, $utilisateur->getPassword());
-            $utilisateur->setPassword($hashed);
-
-            $em->persist($utilisateur);
-            $em->flush();
-
-            $this->addFlash('success', 'Votre profil a été modifié avec succès');
-            return $this->redirectToRoute('app_participant_voir_profil', ['id' => $utilisateur->getId()]);
+            return $this->render('utilisateur/modifierProfil.html.twig', [
+                'profilForm' => $profilForm->createView(),
+            ]);
+        } else {
+            $this->addFlash('erreur', 'Vous ne disposez pas des droits nécessaire !');
+            return $this->redirectToRoute('app_sortie_index');
         }
-
-        return $this->render('utilisateur/modifierProfil.html.twig', [
-            'profilForm' => $profilForm->createView(),
-        ]);
     }
 }
