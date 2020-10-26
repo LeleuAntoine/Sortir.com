@@ -11,7 +11,6 @@ use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,9 +35,7 @@ class SortieController extends AbstractController
     /**
      * @Route("/", name="app_sortie_index")
      */
-    public function index(SortieRepository $sortieRepository, CampusRepository $campusRepository,
-                          EtatRepository $etatRepository, PaginatorInterface $paginator,
-                          Request $request, ParticipantRepository $participantRepository): Response
+    public function index(SortieRepository $sortieRepository, CampusRepository $campusRepository, EtatRepository $etatRepository, PaginatorInterface $paginator, Request $request, ParticipantRepository $participantRepository): Response
     {
         $campus = $campusRepository->findAll();
         $user = $this->getUser();
@@ -104,10 +101,8 @@ class SortieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $sortie->setOrganisateur($participant);
             $sortie->setEtat($etat);
-            $this->em->persist($sortie);
             $this->em->flush();
 
-            $this->addFlash('success', 'Sortie créer !');
             return $this->redirectToRoute('app_sortie_index');
         }
         return $this->render('sortie/creer.html.twig', [
@@ -118,59 +113,49 @@ class SortieController extends AbstractController
     /**
      * @Route ("/modifier/{id<[0-9]+>}", name="app_sortie_modifier")
      */
-    public function modifier(Request $request, SortieRepository $sortieRepository, $id): Response
+    public function modifier(Request $request, EtatRepository $etatRepository, SortieRepository $sortieRepository, $id): Response
     {
         $sortie = $sortieRepository->find($id);
         $participant = $this->getUser();
-//            Vérifie si la personne à les droit pour la modification
-        if (in_array("ROLE_ADMIN", $participant->getRoles()) or
-            $participant->getUsername() === $sortie->getOrganisateur()->getUsername()) {
 
-            $form = $this->createForm(SortieType::class, $sortie);
-            $form->handleRequest($request);
+        $form = $this->createForm(SortieType::class, $sortie);
+        $form->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $this->em->flush();
-                $this->addFlash('Modification_reussite', 'Sortie modifié avec succé !');
-            }
-        } else {
-            $this->addFlash('erreur', 'Vous ne disposez pas des droits nécessaire !');
-            return new RedirectResponse('/sortie');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $sortie->setOrganisateur($participant);
+            $sortie->setSiteOrganisateur($participant->getCampus());
+            $this->em->persist($sortie);
+            $this->em->flush();
+            return $this->redirectToRoute('app_sortie_index');
         }
-        return $this->render('sortie/modifier.html.twig', ['form' => $form->createView()]);
+        return $this->render('sortie/modifier.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
-
 
     /**
      * @Route("/{id<[0-9]+>}", name="app_sortie_afficher", methods={"GET"})
      */
-    public
-    function afficher($id, SortieRepository $sortieRepository): Response
+    public function afficher($id, SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
-        if ($sortie->getEtat()->getLibelle() !== "Créée") {
-            return $this->render('sortie/afficher.html.twig', [
-                'sortie' => $sortie,
-            ]);
-        }
-        else{
-            $this->addFlash('erreur', 'Visualisation impossible');
-            return new RedirectResponse('/sortie');
-        }
+
+        return $this->render('sortie/afficher.html.twig', [
+            'sortie' => $sortie,
+        ]);
     }
 
     /**
      * @Route("/{id}/inscription", name="app_sortie_s_inscrire", requirements={"id": "\d+"})
      */
-    public
-    function sInscrire(Sortie $sortie, ParticipantRepository $participantRepository)
+    public function sInscrire(Sortie $sortie, ParticipantRepository $participantRepository, EntityManagerInterface $em)
     {
         $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
 
         $sortie->ajouterParticipant($participant);
 
-        $this->em->persist($sortie);
-        $this->em->flush();
+        $em->persist($sortie);
+        $em->flush();
 
         $this->addFlash('success', 'Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
         return $this->redirectToRoute('app_sortie_index');
@@ -180,8 +165,7 @@ class SortieController extends AbstractController
     /**
      * @Route("/{id}/desinscription", name="app_sortie_se_desinscrire", requirements={"id": "\d+"})
      */
-    public
-    function seDesinscrire(Sortie $sortie, ParticipantRepository $participantRepository)
+    public function seDesinscrire(Sortie $sortie, ParticipantRepository $participantRepository, EntityManagerInterface $em)
     {
         $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
 
@@ -191,8 +175,8 @@ class SortieController extends AbstractController
 
         $sortie->enleverParticipant($participant);
 
-        $this->em->persist($sortie);
-        $this->em->flush();
+        $em->persist($sortie);
+        $em->flush();
 
         $this->addFlash('success', 'Vous êtes bien désinscrit à la sortie ' . $sortie->getNom());
         return $this->redirectToRoute('app_sortie_index');
