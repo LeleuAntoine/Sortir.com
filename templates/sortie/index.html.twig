@@ -91,17 +91,28 @@
                             <a href="{{ path('app_participant_voir_profil', {id: sortie.organisateur.id }) }}">{{ sortie.organisateur.username }}</a>
                         </td>
                         <td>
-                            <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher</a>
-                            {% if sortie.etat.id < 3 %}
+                            {# Vérifie si l'état de la sortie est bien ouverte #}
+                            {% if sortie.etat.libelle == "Ouverte" %}
+
                                 {% if utilisateur.sortiesInscrits.contains(sortie) %}
-                                    <a href="{{ path('app_sortie_se_desinscrire', {id: sortie.id}) }}">Se désister</a>
+                                    <a href="{{ path('app_sortie_se_desinscrire', {id: sortie.id}) }}">Se désister</a> -
+
                                 {% elseif utilisateur != sortie.organisateur %}
-                                        <a href="{{ path('app_sortie_s_inscrire', {id: sortie.id}) }}">S'inscrire</a>
+                                    <a href="{{ path('app_sortie_s_inscrire', {id: sortie.id}) }}">S'inscrire</a> -
                                 {% endif %}
                             {% endif %}
-                            {% if app.user.username == sortie.organisateur.username %}
-                                <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}">Modifier</a>
+
+                            {# Vérifie si l'état de la sortie est à créée #}
+                            {% if app.user.username == sortie.organisateur.username and sortie.etat.libelle == "Créée"
+                                or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle == "Créée" %}
+                                <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}">Modifier</a> -
                                 <a href="#">Publier</a>
+                            {% endif %}
+
+                            {# Vérifie si l'état de la sortie est autre que l'état créée #}
+                            {% if app.user.username == sortie.organisateur.username and sortie.etat.libelle != "Créée"
+                                or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle != "Créée" %}
+                                <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher</a> -
                                 <a href="#">Annuler</a>
                             {% endif %}
                         </td>

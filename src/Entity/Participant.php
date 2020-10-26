@@ -323,5 +323,4 @@ class Participant implements UserInterface
     {
     }
 
-
 }
