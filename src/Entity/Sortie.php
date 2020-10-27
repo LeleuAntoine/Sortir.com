@@ -298,5 +298,4 @@ class Sortie
     {
         $this->etat = $etat;
     }
-
 }
