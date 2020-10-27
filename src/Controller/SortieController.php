@@ -56,7 +56,6 @@ class SortieController extends AbstractController
 
         //Sortie entre debutPeriode et finPeriode
         $debutPeriode = strtotime($request->query->get('date_debut'));
-        var_dump($debutPeriode);
         $finPeriode = strtotime($request->query->get('date_fin'));
         if ($debutPeriode and $finPeriode) {
             $dateDebut = date('Y-m-d H:i:s', $debutPeriode);

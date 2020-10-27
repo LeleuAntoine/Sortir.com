@@ -91,41 +91,29 @@
                             <a href="{{ path('app_participant_voir_profil', {id: sortie.organisateur.id }) }}">{{ sortie.organisateur.username }}</a>
                         </td>
                         <td>
-                            {# Vérifie si l'état de la sortie est bien ouverte #}
-                            {% if sortie.etat.libelle == "Ouverte" %}
-                                | <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher</a> |
-                                {% if utilisateur.sortiesInscrits.contains(sortie) %}
-                                    <a href="{{ path('app_sortie_se_desinscrire', {id: sortie.id}) }}">Se désister</a> |
-                                {% elseif utilisateur != sortie.organisateur and sortie.participants | length < sortie.nbInscriptionMax %}
-                                    <a href="{{ path('app_sortie_s_inscrire', {id: sortie.id}) }}">S'inscrire</a> |
-                                {% endif %}
-                            {% endif %}
-                            {# Vérifie si l'état de la sortie est à créée #}
-                            {% if utilisateur.id == sortie.organisateur.id and sortie.etat.libelle == "Créée"
-                                or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle == "Créée" %}
-                                | <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}">Modifier</a> |
-                                <a href="{{ path('app_sortie_publier', {id: sortie.id}) }}">Publier</a> |
                         <td class="form-inline">
-                            {# Vérifie si l'état de la sortie est bien ouverte #}
-                            
+
+                            {# Le bouton afficher n'est disponible que pour les sorties dans un état autre que créé #}
                             {% if sortie.etat.libelle != "Créée" %}
-                            <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}" class="btn btn-primary btn-sm">Afficher</a> -
+                            <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}" class="btn btn-primary btn-sm">Afficher</a>
                             {% endif %}
+
+                            {# Vérifie si l'état de la sortie est bien ouverte #}
                             {% if sortie.etat.libelle == "Ouverte" %}
                                 {% if utilisateur.sortiesInscrits.contains(sortie) %}
                                     <a href="{{ path('app_sortie_se_desinscrire', {id: sortie.id}) }}"
-                                       class="btn btn-warning btn-sm">Se désister</a> -
+                                       class="btn btn-warning btn-sm">Se désister</a>
                                 {% elseif utilisateur != sortie.organisateur and sortie.participants | length < sortie.nbInscriptionMax  %}
                                     <a href="{{ path('app_sortie_s_inscrire', {id: sortie.id}) }}"
-                                       class="btn btn-success btn-sm">S'inscrire</a> -
+                                       class="btn btn-success btn-sm">S'inscrire</a>
                                 {% endif %}
                             {% endif %}
 
                             {# Vérifie si l'état de la sortie est à créée #}
                             {% if app.user.username == sortie.organisateur.username and sortie.etat.libelle == "Créée"
                                 or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle == "Créée" %}
-                                <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}" class="btn btn-warning btn-sm">Modifier</a> -
-                                <a href="#" class="btn btn-success btn-sm">Publier</a>
+                                <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                                <a href="{{ path('app_sortie_publier', {id: sortie.id}) }}" class="btn btn-success btn-sm">Publier</a>
                             {% endif %}
 
                             {# Vérifie si l'état de la sortie est autre que l'état créée #}
@@ -133,8 +121,6 @@
                                 or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle != "Créée" %}
                                 <a href="#" class="btn btn-danger btn-sm">Annuler</a>
                             {% endif %}
-                            
-
                         </td>
                     </tr>
                 {% endfor %}
