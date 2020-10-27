@@ -10,6 +10,7 @@ use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use MercurySeries\FlashyBundle\FlashyNotifier;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,13 +23,15 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SortieController extends AbstractController
 {
+    private $flashy;
     private $em;
 
     /**
      * @param EntityManagerInterface $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(FlashyNotifier $flashy, EntityManagerInterface $em)
     {
+        $this->flashy = $flashy;
         $this->em = $em;
     }
 
@@ -106,7 +109,7 @@ class SortieController extends AbstractController
             $this->em->persist($sortie);
             $this->em->flush();
 
-            $this->addFlash('success', 'Sortie créer !');
+            $this->flashy->success('Sortie créer !');
             return $this->redirectToRoute('app_sortie_index');
         }
         return $this->render('sortie/creer.html.twig', [
@@ -122,18 +125,20 @@ class SortieController extends AbstractController
         $sortie = $sortieRepository->find($id);
         $participant = $this->getUser();
 //            Vérifie si la personne à les droit pour la modification
-        if (in_array("ROLE_ADMIN", $participant->getRoles()) or
-            $participant->getUsername() === $sortie->getOrganisateur()->getUsername()) {
+        if (in_array("ROLE_ADMIN", $participant->getRoles())
+            and $sortie->getEtat()->getlibelle() === "Créée" or
+            $participant->getUsername() === $sortie->getOrganisateur()->getUsername()
+            and $sortie->getEtat()->getlibelle() === "Créée") {
 
             $form = $this->createForm(SortieType::class, $sortie);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
                 $this->em->flush();
-                $this->addFlash('Modification_reussite', 'Sortie modifié avec succé !');
+                $this->flashy->success('Sortie modifié avec succé !');
             }
         } else {
-            $this->addFlash('erreur', 'Vous ne disposez pas des droits nécessaire !');
+            $this->flashy->error('Vous ne disposez pas des droits nécessaire !', '#');
             return $this->redirectToRoute('app_sortie_index');
         }
         return $this->render('sortie/modifier.html.twig', ['form' => $form->createView()]);
@@ -151,9 +156,8 @@ class SortieController extends AbstractController
             return $this->render('sortie/afficher.html.twig', [
                 'sortie' => $sortie,
             ]);
-        }
-        else{
-            $this->addFlash('erreur', 'Visualisation impossible');
+        } else {
+            $this->flashy->error('Visualisation impossible');
             return $this->redirectToRoute('app_sortie_index');
         }
     }
@@ -171,7 +175,7 @@ class SortieController extends AbstractController
         $this->em->persist($sortie);
         $this->em->flush();
 
-        $this->addFlash('success', 'Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
+        $this->flashy->success('Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
         return $this->redirectToRoute('app_sortie_index');
 
     }
@@ -193,7 +197,7 @@ class SortieController extends AbstractController
         $this->em->persist($sortie);
         $this->em->flush();
 
-        $this->addFlash('success', 'Vous êtes bien désinscrit à la sortie ' . $sortie->getNom());
+        $this->flashy->success('Vous êtes bien désinscrit à la sortie ' . $sortie->getNom());
         return $this->redirectToRoute('app_sortie_index');
 
     }

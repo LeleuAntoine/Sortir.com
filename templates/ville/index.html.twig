@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les villes{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="d-flex justify-content-center">Gérer les villes</h1>
+        <form method="get">
+            <fieldset>
+                <legend>Filtres</legend>
+                <div class="d-flex justify-content-between">
+                    <div class="form-group">
+                        <div class="form-inline">
+                            <label for="nom_ville_contient">Le nom de la ville contient : </label>
+                            <input class="form-control" type="text" id="nom_ville_contient"
+                                   name="nom_ville_contient"/>
+                            <button type="submit" class="btn btn-primary">Recherche</button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <article>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Ville</th>
+                    <th>Code Postal</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ville in villes %}
+                    <tr>
+                        <td>{{ ville.nom }}</td>
+                        <td>{{ ville.codePostal }}</td>
+                        <td>
+                            <a href="#" class="btn btn-warning btn-sm">Modifier</a> -
+                            <a href="#" class="btn btn-danger btn-sm">Supprimer</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr class="form-group">
+                    <form method="post">
+                        <td><input class="form-control" type="text" id="nom_ville"></td>
+                        <td><input class="form-control" type="text" id="code_postal_ville"></td>
+                        <td>
+                            <button type="submit" class="btn btn-success btn-sm">Ajouter</button>
+                        </td>
+                    </form>
+                </tr>
+                </tbody>
+            </table>
+        </article>
+        {{ knp_pagination_render(villes) }}
+        {% if villes.totalItemCount == 0 %}
+            <p>Aucune villes n'est enregistré selon votre critères de recherches.</p>
+        {% endif %}
+    </div>
+{% endblock %}
