@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Sortie;
+use App\Form\CreerSortieType;
+use App\Form\ModifierSortieType;
 use App\Form\SortieType;
 use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
@@ -43,25 +45,50 @@ class SortieController extends AbstractController
         $user = $this->getUser();
         $utilisateur = $participantRepository->findOneBy(['username' => $user->getUsername()]);
 
+        //Sortie sur le campus
         $filtreCampus = $request->query->get('campus');
+
+        //Sortie dont le nom commence par
         $filtreMot = $request->query->get('nom_sortie_contient');
+
+        //Sortie entre debutPeriode et finPeriode
         $debutPeriode = strtotime($request->query->get('date_debut'));
+        var_dump($debutPeriode);
         $finPeriode = strtotime($request->query->get('date_fin'));
         if ($debutPeriode and $finPeriode) {
-            $dateDebut = date('Y-m-d 00:00:00', $debutPeriode);
-            $dateFin = date('Y-m-d 00:00:00', $finPeriode);
+            $dateDebut = date('Y-m-d H:i:s', $debutPeriode);
+            $dateFin = date('Y-m-d H:i:s', $finPeriode);
             var_dump($dateDebut);
             var_dump($dateFin);
         } else {
             $dateDebut = null;
             $dateFin = null;
         }
+        //Sorties dont je suis l'organisateur
         $checkOrganisateur = $request->query->get('sortie_organisateur');
         if ($checkOrganisateur) {
             $filtreOrganisateur = $utilisateur;
         } else {
             $filtreOrganisateur = null;
         }
+
+        //Sorties auxquelles je suis inscrit
+        $checkInscrit = $request->query->get('sortie_inscrit');
+        if ($checkInscrit) {
+            $filtreInscrit = $utilisateur;
+        } else {
+            $filtreInscrit = null;
+        }
+
+        //Sorties auxquelles je ne suis pas inscrit
+        $checkNonInscrit = $request->query->get('sortie_non_inscrit');
+        if ($checkNonInscrit) {
+            $filtreNonInscrit = $utilisateur;
+        } else {
+            $filtreNonInscrit = null;
+        }
+
+        //Sorties dont l'état est "passé"
         $checkSortiePassee = $request->query->get('sorties_passees');
         if ($checkSortiePassee) {
             $filtreSortiePassee = $etatRepository->findOneBy(['libelle' => 'Passée']);
@@ -71,9 +98,10 @@ class SortieController extends AbstractController
 
 
         $sorties = $paginator->paginate(
-            $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot, $dateDebut, $dateFin, $filtreOrganisateur, $filtreSortiePassee),
+            $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot, $dateDebut, $dateFin, $filtreOrganisateur, $filtreInscrit, $filtreNonInscrit,
+                $filtreSortiePassee),
             $request->query->getInt('page', 1),
-            5
+            10
         );
 
         return $this->render('sortie/index.html.twig', [
@@ -95,18 +123,32 @@ class SortieController extends AbstractController
         $sortie->setDateLimiteInscription(new \DateTime('now'));
         $sortie->setSiteOrganisateur($participant->getCampus());
 
-        $etat = $etatRepository->findOneBy(array('libelle' => 'Créée'));
+
 
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $sortie->setOrganisateur($participant);
-            $sortie->setEtat($etat);
-            $this->em->persist($sortie);
-            $this->em->flush();
 
-            $this->addFlash('success', 'Sortie créer !');
+            $sortie->setOrganisateur($participant);
+            if ($form->get('enregistrer')->isClicked()) {
+                $etat = $etatRepository->findOneBy(array('libelle' => 'Créée'));
+                $sortie->setEtat($etat);
+                $this->em->persist($sortie);
+                $this->em->flush();
+
+                $this->addFlash('success', 'Sortie créée !');
+            } elseif ($form->get('publier')->isClicked()) {
+                $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
+                $sortie->setEtat($etat);
+                $this->em->persist($sortie);
+                $this->em->flush();
+
+                $this->addFlash('success', 'Sortie publiée !');
+            } else {
+                return $this->redirectToRoute('app_sortie_index');
+            }
+
             return $this->redirectToRoute('app_sortie_index');
         }
         return $this->render('sortie/creer.html.twig', [
@@ -117,7 +159,7 @@ class SortieController extends AbstractController
     /**
      * @Route ("/modifier/{id<[0-9]+>}", name="app_sortie_modifier")
      */
-    public function modifier(Request $request, SortieRepository $sortieRepository, $id): Response
+    public function modifier(Request $request, SortieRepository $sortieRepository, $id, EtatRepository $etatRepository): Response
     {
         $sortie = $sortieRepository->find($id);
         $participant = $this->getUser();
@@ -129,11 +171,27 @@ class SortieController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
+                if ($form->get('enregistrer')->isClicked()) {
+                    $this->em->persist($sortie);
+
+                    $this->addFlash('success', 'Sortie modifiée avec succès !');
+                } elseif ($form->get('publier')->isClicked()) {
+                    $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
+                    $sortie->setEtat($etat);
+                    $this->em->persist($sortie);
+
+                    $this->addFlash('success', 'Sortie publiée avec succès !');
+                } elseif ($form->get('supprimer')->isClicked()) {
+                    $this->em->remove($sortie);
+
+                    $this->addFlash('success', 'Sortie supprimée avec succès !');
+                }
+
                 $this->em->flush();
-                $this->addFlash('Modification_reussite', 'Sortie modifié avec succé !');
+                return $this->redirectToRoute('app_sortie_index');
             }
         } else {
-            $this->addFlash('erreur', 'Vous ne disposez pas des droits nécessaire !');
+            $this->addFlash('error', 'Vous ne disposez pas des droits nécessaire !');
             return $this->redirectToRoute('app_sortie_index');
         }
         return $this->render('sortie/modifier.html.twig', ['form' => $form->createView()]);
@@ -143,17 +201,15 @@ class SortieController extends AbstractController
     /**
      * @Route("/{id<[0-9]+>}", name="app_sortie_afficher", methods={"GET"})
      */
-    public
-    function afficher($id, SortieRepository $sortieRepository): Response
+    public function afficher($id, SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
         if ($sortie->getEtat()->getLibelle() !== "Créée") {
             return $this->render('sortie/afficher.html.twig', [
                 'sortie' => $sortie,
             ]);
-        }
-        else{
-            $this->addFlash('erreur', 'Visualisation impossible');
+        } else {
+            $this->addFlash('error', 'Visualisation impossible');
             return $this->redirectToRoute('app_sortie_index');
         }
     }
@@ -161,17 +217,28 @@ class SortieController extends AbstractController
     /**
      * @Route("/{id}/inscription", name="app_sortie_s_inscrire", requirements={"id": "\d+"})
      */
-    public
-    function sInscrire(Sortie $sortie, ParticipantRepository $participantRepository)
+    public function sInscrire(Sortie $sortie, ParticipantRepository $participantRepository, EtatRepository $etatRepository, SortieRepository $sortieRepository)
     {
+        $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
+        $nbParticipants = $sortieRepository->findNumberOfParticipants($sortie);
         $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
 
-        $sortie->ajouterParticipant($participant);
+        if ($sortie->getEtat() == $etat and $nbParticipants < $sortie->getNbInscriptionMax()) {
+            $sortie->ajouterParticipant($participant);
 
-        $this->em->persist($sortie);
-        $this->em->flush();
+            $this->em->persist($sortie);
+            $this->em->flush();
 
-        $this->addFlash('success', 'Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
+            $this->addFlash('success', 'Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
+
+        } else {
+            if ($sortie->getEtat() != $etat) {
+                $this->addFlash('error', 'Les inscriptions sont clôturées pour cette sortie');
+            } else {
+                $this->addFlash('error', 'Il n\'y a plus de places disponibles pour cette sortie');
+            }
+        }
+
         return $this->redirectToRoute('app_sortie_index');
 
     }
@@ -179,8 +246,7 @@ class SortieController extends AbstractController
     /**
      * @Route("/{id}/desinscription", name="app_sortie_se_desinscrire", requirements={"id": "\d+"})
      */
-    public
-    function seDesinscrire(Sortie $sortie, ParticipantRepository $participantRepository)
+    public function seDesinscrire(Sortie $sortie, ParticipantRepository $participantRepository)
     {
         $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
 
@@ -197,4 +263,24 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('app_sortie_index');
 
     }
+
+    /**
+     * @Route("/{id}/publier", name="app_sortie_publier", requirements={"id": "\d+"})
+     */
+    public function publierSortie(Sortie $sortie, EtatRepository $etatRepository)
+    {
+        if (!$sortie) {
+            throw $this->createNotFoundException('Sortie non trouvée');
+        }
+
+        $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
+        $sortie->setEtat($etat);
+
+        $this->em->persist($sortie);
+        $this->em->flush();
+
+        $this->addFlash('success', 'Votre sortie a bien été publiée');
+        return $this->redirectToRoute('app_sortie_index');
+    }
+
 }

@@ -27,22 +27,22 @@
                             </div>
                             <div class="form-inline d-flex justify-content-between">
                                 <label for="date_debut">Entre :</label>
-                                <input class="form-control" type="datetime-local" id="date_debut">
+                                <input class="form-control" type="datetime-local" id="date_debut" name="date_debut">
                                 <label for="date_fin">et</label>
-                                <input class="form-control" type="datetime-local" id="date_fin">
+                                <input class="form-control" type="datetime-local" id="date_fin" name="date_fin">
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="checkbox" id="sortie_organisateur">
+                            <input type="checkbox" id="sortie_organisateur" name="sortie_organisateur">
                             <label for="sortie_organisateur">Sorties dont je suis l'organisateur/trice </label>
                             <br>
-                            <input type="checkbox" id="sortie_inscrit">
+                            <input type="checkbox" id="sortie_inscrit" name="sortie_inscrit">
                             <label for="sortie_inscrit">Sorties auxquelles je suis inscrit/e </label>
                             <br>
-                            <input type="checkbox" id="sortie_non_inscrit">
+                            <input type="checkbox" id="sortie_non_inscrit" name="sortie_non_inscrit">
                             <label for="sortie_non_inscrit">Sorties auxquelles je ne suis pas inscrit/e </label>
                             <br>
-                            <input type="checkbox" id="sorties_passees">
+                            <input type="checkbox" id="sorties_passees" name="sorties_passees">
                             <label for="sorties_passees">Sorties passées </label>
                         </div>
                         <div class="form-group align-self-center">
@@ -91,19 +91,27 @@
                             <a href="{{ path('app_participant_voir_profil', {id: sortie.organisateur.id }) }}">{{ sortie.organisateur.username }}</a>
                         </td>
                         <td>
-                            <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher</a>
-                            {% if sortie.etat.id < 3 %}
+                            {# Vérifie si l'état de la sortie est bien ouverte #}
+                            {% if sortie.etat.libelle == "Ouverte" %}
+                                | <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}">Afficher</a> |
                                 {% if utilisateur.sortiesInscrits.contains(sortie) %}
-                                    <a href="{{ path('app_sortie_se_desinscrire', {id: sortie.id}) }}">Se désister</a>
-                                {% elseif utilisateur != sortie.organisateur %}
-                                        <a href="{{ path('app_sortie_s_inscrire', {id: sortie.id}) }}">S'inscrire</a>
+                                    <a href="{{ path('app_sortie_se_desinscrire', {id: sortie.id}) }}">Se désister</a> |
+                                {% elseif utilisateur != sortie.organisateur and sortie.participants | length < sortie.nbInscriptionMax %}
+                                    <a href="{{ path('app_sortie_s_inscrire', {id: sortie.id}) }}">S'inscrire</a> |
                                 {% endif %}
                             {% endif %}
-                            {% if app.user.username == sortie.organisateur.username %}
-                                <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}">Modifier</a>
-                                <a href="#">Publier</a>
-                                <a href="#">Annuler</a>
+                            {# Vérifie si l'état de la sortie est à créée #}
+                            {% if utilisateur.id == sortie.organisateur.id and sortie.etat.libelle == "Créée"
+                                or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle == "Créée" %}
+                                | <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}">Modifier</a> |
+                                <a href="{{ path('app_sortie_publier', {id: sortie.id}) }}">Publier</a> |
                             {% endif %}
+                            {# Vérifie si l'état de la sortie est autre que l'état créée #}
+                            {% if utilisateur.id == sortie.organisateur.id and sortie.etat.libelle != "Créée"
+                                or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle != "Créée" %}
+                                <a href="#">Annuler</a> |
+                            {% endif %}
+
                         </td>
                     </tr>
                 {% endfor %}
