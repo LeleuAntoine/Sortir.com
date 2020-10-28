@@ -62,7 +62,6 @@ class UtilisateurController extends AbstractController
                 $hashed = $encoder->encodePassword($participant, $participant->getPassword());
                 $participant->setPassword($hashed);
 
-                $em->persist($participant);
                 $em->flush();
 
                 $this->addFlash('success', 'Votre profil a été modifié avec succès');

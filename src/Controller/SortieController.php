@@ -176,15 +176,20 @@ class SortieController extends AbstractController
 
             if ($form->isSubmitted() && $form->isValid()) {
                 if ($form->get('enregistrer')->isClicked()) {
-                    $this->em->persist($sortie);
-                    
                   $this->flashy->success('Sortie modifiée avec succès !');
+
                 } elseif ($form->get('publier')->isClicked()) {
                     $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
                     $sortie->setEtat($etat);
-                    $this->em->persist($sortie);
-                  
+
+                    $this->flashy->success('Sortie modifiée avec succès !');
+
+                } elseif ($form->get('publier')->isClicked()) {
+                    $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
+                    $sortie->setEtat($etat);
+
                     $this->flashy->success('Sortie publiée avec succès !');
+
                 } elseif ($form->get('supprimer')->isClicked()) {
                     $this->em->remove($sortie);
                   
@@ -234,18 +239,19 @@ class SortieController extends AbstractController
         if ($sortie->getEtat() == $ouvert and $nbParticipantsActuels < $sortie->getNbInscriptionMax() and $now < $sortie->getDateLimiteInscription()) {
             $sortie->ajouterParticipant($participant);
 
-            $this->em->persist($sortie);
             $this->em->flush();
             
             $this->flashy->success('Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
         } else {
             if ($sortie->getEtat() != $ouvert) {
                 $this->flashy->error('Les inscriptions sont clôturées pour cette sortie');
+
             } elseif ($nbParticipantsActuels > $sortie->getNbInscriptionMax()) {
                 $this->flashy->error('Il n\'y a plus de places disponibles pour cette sortie');
+
             } elseif ($sortie->getDateLimiteInscription() > $now) {
+
                 $sortie->setEtat($cloture);
-                $this->em->persist($sortie);
                 $this->em->flush();
                 $this->flashy->error('La date limite d\'inscription pour cette sortie est dépassée' );
             }
@@ -272,16 +278,13 @@ class SortieController extends AbstractController
         if ($now < $sortie->getDateHeureDebut()) {
             $sortie->enleverParticipant($participant);
 
-            $this->em->persist($sortie);
-            $this->em->flush();
-
             $this->flashy->success('Vous êtes bien désinscrit à la sortie ' . $sortie->getNom());
+
         } else {
             $sortie->setEtat($activiteEnCours);
-            $this->em->persist($sortie);
-            $this->em->flush();
             $this->flashy->error('La sortie est en cours, vous ne pouvez plus vous désister' );
         }
+        $this->em->flush();
 
         return $this->redirectToRoute('app_sortie_index');
 
@@ -299,12 +302,40 @@ class SortieController extends AbstractController
         $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
         $sortie->setEtat($etat);
 
-        $this->em->persist($sortie);
         $this->em->flush();
 
         $this->flashy->success('Votre sortie a bien été publiée');
-        $this->addFlash('success', 'Votre sortie a bien été publiée');
         return $this->redirectToRoute('app_sortie_index');
     }
 
+    /**
+     * @Route("/{id}/annuler", name="app_sortie_annuler", requirements={"id": "\d+"})
+     */
+    public function annulerSortie(Sortie $sortie, Request $request, EtatRepository $etatRepository)
+    {
+        $motif = $request->request->get('motif');
+        var_dump($motif);
+
+        $ouverte = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
+        $cloture = $etatRepository->findOneBy(array('libelle' => 'Clôturée'));
+        $annulee = $etatRepository->findOneBy(array('libelle' => 'Annulée'));
+
+        if ($sortie->getEtat() == $ouverte or $sortie->getEtat() == $cloture) {
+            if($motif) {
+                $sortie->setInfosSortie($motif);
+                $sortie->setEtat($annulee);
+                $this->em->flush();
+
+                $this->flashy->success('La sortie ' . $sortie->getNom() . ' a bien été annulée');
+                return $this->redirectToRoute('app_sortie_index');
+            }
+        } else {
+            $this->flashy->error('Vous ne pouvez plus annuler cette sortie');
+            return $this->redirectToRoute('app_sortie_index');
+        }
+
+        return $this->render('sortie/annuler.html.twig', [
+            'sortie' => $sortie,
+        ]);
+    }
 }
