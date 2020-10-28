@@ -32,3 +32,4 @@ security:
     access_control:
         - { path: ^/sortie, roles: ROLE_USER }
         - { path: ^/profil, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }

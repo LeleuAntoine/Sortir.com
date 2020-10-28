@@ -73,10 +73,10 @@
                             {{ sortie.nom }}
                         </td>
                         <td>
-                            {{ sortie.dateHeureDebut | date('d/m/Y H:m') }}
+                            {{ sortie.dateHeureDebut | date('d/m/Y H:i') }}
                         </td>
                         <td>
-                            {{ sortie.dateLimiteInscription | date('d/M/Y') }}
+                            {{ sortie.dateLimiteInscription | date('d/m/Y H:i') }}
                         </td>
                         <td>
                             {{ sortie.participants | length }} / {{ sortie.nbInscriptionMax }}
@@ -91,15 +91,11 @@
                                     <path fill-rule="evenodd"
                                           d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                                 </svg>
-                            {% endif %}
-
-                            {% if utilisateur != sortie.organisateur and not utilisateur.sortiesInscrits.contains(sortie) %}
+                            {% elseif utilisateur != sortie.organisateur and not utilisateur.sortiesInscrits.contains(sortie) %}
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle"
                                      fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd"
                                           d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                    <path fill-rule="evenodd"
-                                          d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
                                 </svg>
                             {% endif %}
                         </td>
@@ -107,7 +103,6 @@
                             <a href="{{ path('app_participant_voir_profil', {id: sortie.organisateur.id }) }}">{{ sortie.organisateur.username }}</a>
                         </td>
                         <td class="form-inline">
-
                             {# Le bouton afficher n'est disponible que pour les sorties dans un état autre que créé #}
                             {% if sortie.etat.libelle != "Créée" %}
                                 <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}"
@@ -116,19 +111,16 @@
 
                             {# Vérifie si l'état de la sortie est bien ouverte #}
                             {% if sortie.etat.libelle == "Ouverte" %}
-
-                                {% if utilisateur.sortiesInscrits.contains(sortie) %}
+                                {% if sortie.participants.contains(utilisateur) and 'now' |date('U') < sortie.dateHeureDebut | date('U') %}
                                     <a href="{{ path('app_sortie_se_desinscrire', {id: sortie.id}) }}"
                                        class="btn btn-warning btn-sm">Se désister</a>
+                                {% elseif utilisateur != sortie.organisateur and sortie.participants | length < sortie.nbInscriptionMax
+                                    and sortie.dateLimiteInscription | date('U') > 'now' |date('U') %}
 
-                                    {# Affiche uniquement si il reste des places #}
-                                {% elseif utilisateur != sortie.organisateur and sortie.participants | length < sortie.nbInscriptionMax %}
                                     <a href="{{ path('app_sortie_s_inscrire', {id: sortie.id}) }}"
                                        class="btn btn-success btn-sm">S'inscrire</a>
                                 {% endif %}
-
                             {% endif %}
-
                             {# Vérifie si l'état de la sortie est à créée #}
                             {% if app.user.username == sortie.organisateur.username and sortie.etat.libelle == "Créée"
                                 or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle == "Créée" %}
@@ -139,9 +131,9 @@
                             {% endif %}
 
                             {# Vérifie si l'état de la sortie est autre que l'état créée #}
-                            {% if app.user.username == sortie.organisateur.username and sortie.etat.libelle != "Créée"
-                                or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle != "Créée" %}
-                                <a href="#" class="btn btn-danger btn-sm">Annuler</a>
+                            {% if app.user.username == sortie.organisateur.username and (sortie.etat.libelle == "Ouverte" or sortie.etat.libelle == "Clôturée")
+                                or "ROLE_ADMIN" in app.user.roles and (sortie.etat.libelle == "Ouverte" or sortie.etat.libelle == "Clôturée") %}
+                                <a href="{{ path('app_sortie_annuler', {id: sortie.id}) }}" class="btn btn-danger btn-sm">Annuler</a>
                             {% endif %}
                         </td>
                     </tr>

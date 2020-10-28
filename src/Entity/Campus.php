@@ -95,5 +95,9 @@ class Campus
         $this->sortiesOrganisees = $sortiesOrganisees;
     }
 
+    public function __toString()
+    {
+        return $this->nom;
+    }
 
 }

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} | admin{% endblock %}
+
+{% block body %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Nom</th>
+            <th scope="col">Prénom</th>
+            <th scope="col">Pseudo</th>
+            <th scope="col">Email</th>
+            <th scope="col">Téléphone</th>
+            <th scope="col">Campus</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for participant in participants %}
+            <tr>
+                <td>{{ participant.nom }}</td>
+                <td>{{ participant.prenom }}</td>
+                <td>{{ participant.username }}</td>
+                <td>{{ participant.mail }}</td>
+                <td>{{ participant.telephone }}</td>
+                <td>{{ participant.campus.nom }}</td>
+                <td><a class="btn btn-warning" href="#">Désactiver</a> <a class="btn btn-danger" href="#">Supprimer</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {{ knp_pagination_render(participants) }}
+    <a class="btn btn-success" href="{{ path('app_admin_ajouter_utilisateur') }}">Ajouter un utilisateur</a>
+
+    <a class="btn btn-success" href="#">Ajouter un fichier de nouveaux utilisateurs</a>
+{% endblock %}

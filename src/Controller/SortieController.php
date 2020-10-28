@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Date;
 
 /**
  * Class SortieController
@@ -174,15 +175,14 @@ class SortieController extends AbstractController
 
             if ($form->isSubmitted() && $form->isValid()) {
                 if ($form->get('enregistrer')->isClicked()) {
-                    $this->em->persist($sortie);
+                  $this->flashy->success('Sortie modifiée avec succès !');
 
-                    $this->flashy->success('Sortie modifiée avec succès !');
                 } elseif ($form->get('publier')->isClicked()) {
                     $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
                     $sortie->setEtat($etat);
-                    $this->em->persist($sortie);
 
                     $this->flashy->success('Sortie publiée avec succès !');
+
                 } elseif ($form->get('supprimer')->isClicked()) {
                     $this->em->remove($sortie);
 
@@ -222,22 +222,31 @@ class SortieController extends AbstractController
      */
     public function sInscrire(Sortie $sortie, ParticipantRepository $participantRepository, EtatRepository $etatRepository, SortieRepository $sortieRepository)
     {
-        $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
-        $nbParticipants = $sortieRepository->findNumberOfParticipants($sortie);
+        $now = new \DateTime('now');
+        $ouvert = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
+        $cloture = $etatRepository->findOneBy(array('libelle' => 'Clôturée'));
+        $nbParticipantsActuels = $sortieRepository->findNumberOfParticipants($sortie);
+
         $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
 
-        if ($sortie->getEtat() == $etat and $nbParticipants < $sortie->getNbInscriptionMax()) {
+        if ($sortie->getEtat() == $ouvert and $nbParticipantsActuels < $sortie->getNbInscriptionMax() and $now < $sortie->getDateLimiteInscription()) {
             $sortie->ajouterParticipant($participant);
 
-            $this->em->persist($sortie);
             $this->em->flush();
 
             $this->flashy->success('Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
         } else {
-            if ($sortie->getEtat() != $etat) {
+            if ($sortie->getEtat() != $ouvert) {
                 $this->flashy->error('Les inscriptions sont clôturées pour cette sortie');
-            } else {
+
+            } elseif ($nbParticipantsActuels > $sortie->getNbInscriptionMax()) {
                 $this->flashy->error('Il n\'y a plus de places disponibles pour cette sortie');
+
+            } elseif ($sortie->getDateLimiteInscription() > $now) {
+
+                $sortie->setEtat($cloture);
+                $this->em->flush();
+                $this->flashy->error('La date limite d\'inscription pour cette sortie est dépassée' );
             }
         }
 
@@ -248,20 +257,28 @@ class SortieController extends AbstractController
     /**
      * @Route("/{id}/desinscription", name="app_sortie_se_desinscrire", requirements={"id": "\d+"})
      */
-    public function seDesinscrire(Sortie $sortie, ParticipantRepository $participantRepository)
+    public function seDesinscrire(Sortie $sortie, ParticipantRepository $participantRepository, EtatRepository $etatRepository)
     {
+        $now = new \DateTime('now');
+        $activiteEnCours = $etatRepository->findOneBy(array('libelle' => 'Activité en cours'));
+
         $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
 
         if (!$sortie) {
             throw $this->createNotFoundException('Sortie non trouvée');
         }
 
-        $sortie->enleverParticipant($participant);
+        if ($now < $sortie->getDateHeureDebut()) {
+            $sortie->enleverParticipant($participant);
 
-        $this->em->persist($sortie);
+            $this->flashy->success('Vous êtes bien désinscrit à la sortie ' . $sortie->getNom());
+
+        } else {
+            $sortie->setEtat($activiteEnCours);
+            $this->flashy->error('La sortie est en cours, vous ne pouvez plus vous désister' );
+        }
         $this->em->flush();
 
-        $this->flashy->success('Vous êtes bien désinscrit à la sortie ' . $sortie->getNom());
         return $this->redirectToRoute('app_sortie_index');
 
     }
@@ -278,12 +295,40 @@ class SortieController extends AbstractController
         $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
         $sortie->setEtat($etat);
 
-        $this->em->persist($sortie);
         $this->em->flush();
 
         $this->flashy->success('Votre sortie a bien été publiée');
-        $this->addFlash('success', 'Votre sortie a bien été publiée');
         return $this->redirectToRoute('app_sortie_index');
     }
 
+    /**
+     * @Route("/{id}/annuler", name="app_sortie_annuler", requirements={"id": "\d+"})
+     */
+    public function annulerSortie(Sortie $sortie, Request $request, EtatRepository $etatRepository)
+    {
+        $motif = $request->request->get('motif');
+        var_dump($motif);
+
+        $ouverte = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
+        $cloture = $etatRepository->findOneBy(array('libelle' => 'Clôturée'));
+        $annulee = $etatRepository->findOneBy(array('libelle' => 'Annulée'));
+
+        if ($sortie->getEtat() == $ouverte or $sortie->getEtat() == $cloture) {
+            if($motif) {
+                $sortie->setInfosSortie($motif);
+                $sortie->setEtat($annulee);
+                $this->em->flush();
+
+                $this->flashy->success('La sortie ' . $sortie->getNom() . ' a bien été annulée');
+                return $this->redirectToRoute('app_sortie_index');
+            }
+        } else {
+            $this->flashy->error('Vous ne pouvez plus annuler cette sortie');
+            return $this->redirectToRoute('app_sortie_index');
+        }
+
+        return $this->render('sortie/annuler.html.twig', [
+            'sortie' => $sortie,
+        ]);
+    }
 }
