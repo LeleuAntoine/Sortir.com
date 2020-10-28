@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Afficher une sortie{% endblock %}
+{% block title %} {{ parent() }} | Afficher une sortie{% endblock %}
 
 {% block body %}
     <article>
@@ -51,7 +51,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
+                {% endfor %}
             </table>
         {% else %}
             <p>Aucun participant{% if sortie.etat.libelle != "Annulée" %} pour le moment{% endif %}.</p>

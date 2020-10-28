@@ -61,8 +61,6 @@ class SortieController extends AbstractController
         if ($debutPeriode and $finPeriode) {
             $dateDebut = date('Y-m-d H:i:s', $debutPeriode);
             $dateFin = date('Y-m-d H:i:s', $finPeriode);
-            var_dump($dateDebut);
-            var_dump($dateFin);
         } else {
             $dateDebut = null;
             $dateFin = null;
