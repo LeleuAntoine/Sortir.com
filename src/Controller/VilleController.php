@@ -22,7 +22,6 @@ class VilleController extends AbstractController
                           EntityManagerInterface $em)
     {
 
-
         $villes = $villeRepository->findAll();
         $filtreMot = $request->query->get('nom_ville_contient');
         $ajoutNomVille = $request->query->get('nom_ville');
@@ -47,7 +46,4 @@ class VilleController extends AbstractController
         ]);
 
     }
-
-
-
 }

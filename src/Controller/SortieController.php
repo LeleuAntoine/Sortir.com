@@ -127,7 +127,6 @@ class SortieController extends AbstractController
         $sortie->setSiteOrganisateur($participant->getCampus());
 
 
-
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
 
@@ -140,14 +139,14 @@ class SortieController extends AbstractController
                 $this->em->persist($sortie);
                 $this->em->flush();
 
-                 $this->flashy->success('Sortie créée !');
+                $this->flashy->success('Sortie créée !');
             } elseif ($form->get('publier')->isClicked()) {
                 $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
                 $sortie->setEtat($etat);
                 $this->em->persist($sortie);
                 $this->em->flush();
 
-                 $this->flashy->success('Sortie publiée !');
+                $this->flashy->success('Sortie publiée !');
             } else {
                 return $this->redirectToRoute('app_sortie_index');
             }
@@ -182,24 +181,18 @@ class SortieController extends AbstractController
                     $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
                     $sortie->setEtat($etat);
 
-                    $this->flashy->success('Sortie modifiée avec succès !');
-
-                } elseif ($form->get('publier')->isClicked()) {
-                    $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
-                    $sortie->setEtat($etat);
-
                     $this->flashy->success('Sortie publiée avec succès !');
 
                 } elseif ($form->get('supprimer')->isClicked()) {
                     $this->em->remove($sortie);
-                  
+
                     $this->flashy->success('Sortie supprimée avec succès !');
                 }
 
                 $this->em->flush();
                 return $this->redirectToRoute('app_sortie_index');
             }
-        
+
         } else {
             $this->flashy->error('Vous ne disposez pas des droits nécessaires !', '#');
             return $this->redirectToRoute('app_sortie_index');
@@ -240,7 +233,7 @@ class SortieController extends AbstractController
             $sortie->ajouterParticipant($participant);
 
             $this->em->flush();
-            
+
             $this->flashy->success('Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
         } else {
             if ($sortie->getEtat() != $ouvert) {
@@ -256,7 +249,7 @@ class SortieController extends AbstractController
                 $this->flashy->error('La date limite d\'inscription pour cette sortie est dépassée' );
             }
         }
-      
+
         return $this->redirectToRoute('app_sortie_index');
 
     }

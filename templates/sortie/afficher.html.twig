@@ -29,28 +29,33 @@
             </div>
         </div>
     </article>
-        <h3>Liste des participants inscrits :</h3>
-        <div class="d-flex flex-row">
-            {% if sortie.participants | length > 0%}
-                <table>
-                    <thead>
+
+    <h3>Liste des participants inscrits :</h3>
+    <div class="col-sm-6 d-flex flex-row">
+        {% if sortie.participants | length > 0 %}
+            <table class="table table-striped text-center">
+                <thead>
+                <tr>
+                    <th>Pseudo</th>
+                    <th>Nom</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for participant in sortie.participants %}
                     <tr>
-                        <th>Pseudo</th>
-                        <th>Nom</th>
+                        <td>
+                            <a href="{{ path('app_participant_voir_profil', {id: participant.id}) }}">{{ participant.username }}</a>
+                        </td>
+                        <td>{{ participant.prenom }} {{ participant.nom }}</td>
+
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for participant in sortie.participants %}
-                        <tr>
-                            <td><a href="{{ path('app_participant_voir_profil', {id: participant.id}) }}">{{ participant.username }}</a></td>
-                            <td>{{ participant.prenom }} {{ participant.nom }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>Aucun participant{% if sortie.etat.libelle != "Annulée" %} pour le moment{% endif %}.</p>
-            {% endif %}
+                </thead>
+                <tbody>
+                    
+            </table>
+        {% else %}
+            <p>Aucun participant{% if sortie.etat.libelle != "Annulée" %} pour le moment{% endif %}.</p>
+        {% endif %}
         </div>
     <a href="{{ path('app_sortie_index') }}" class="btn btn-primary">Accueil</a>
 {% endblock %}
