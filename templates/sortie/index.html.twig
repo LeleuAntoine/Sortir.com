@@ -23,8 +23,7 @@
                             </div>
                             <div class="form-inline d-flex justify-content-between">
                                 <label for="nom_sortie_contient">Le nom de la sortie contient : </label>
-                                <input class="form-control" type="text" id="nom_sortie_contient"
-                                       name="nom_sortie_contient"/>
+                                <input class="form-control" type="text" id="nom_sortie_contient" name="nom_sortie_contient"/>
                             </div>
                             <div class="form-inline d-flex justify-content-between">
                                 <label for="date_debut">Entre :</label>
@@ -73,10 +72,10 @@
                             {{ sortie.nom }}
                         </td>
                         <td>
-                            {{ sortie.dateHeureDebut | date('d/m/Y H:m') }}
+                            {{ sortie.dateHeureDebut | date('d/m/Y H:i') }}
                         </td>
                         <td>
-                            {{ sortie.dateLimiteInscription | date('d/M/Y') }}
+                            {{ sortie.dateLimiteInscription | date('d/m/Y H:i') }}
                         </td>
                         <td>
                             {{ sortie.participants | length }} / {{ sortie.nbInscriptionMax }}
@@ -85,14 +84,14 @@
                             {{ sortie.etat.libelle }}
                         </td>
                         <td>
-                            TODO
+                            {% if sortie.participants.contains(utilisateur) %}
+                                &#10003;
+                            {% endif %}
                         </td>
                         <td>
                             <a href="{{ path('app_participant_voir_profil', {id: sortie.organisateur.id }) }}">{{ sortie.organisateur.username }}</a>
                         </td>
-                        <td>
                         <td class="form-inline">
-
                             {# Le bouton afficher n'est disponible que pour les sorties dans un état autre que créé #}
                             {% if sortie.etat.libelle != "Créée" %}
                             <a href="{{ path('app_sortie_afficher', {id: sortie.id}) }}" class="btn btn-primary btn-sm">Afficher</a>
@@ -100,10 +99,11 @@
 
                             {# Vérifie si l'état de la sortie est bien ouverte #}
                             {% if sortie.etat.libelle == "Ouverte" %}
-                                {% if utilisateur.sortiesInscrits.contains(sortie) %}
+                                {% if sortie.participants.contains(utilisateur) and 'now' |date('U') < sortie.dateHeureDebut | date('U') %}
                                     <a href="{{ path('app_sortie_se_desinscrire', {id: sortie.id}) }}"
                                        class="btn btn-warning btn-sm">Se désister</a>
-                                {% elseif utilisateur != sortie.organisateur and sortie.participants | length < sortie.nbInscriptionMax  %}
+                                {% elseif utilisateur != sortie.organisateur and sortie.participants | length < sortie.nbInscriptionMax
+                                    and sortie.dateLimiteInscription | date('U') > 'now' |date('U') %}
                                     <a href="{{ path('app_sortie_s_inscrire', {id: sortie.id}) }}"
                                        class="btn btn-success btn-sm">S'inscrire</a>
                                 {% endif %}

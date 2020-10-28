@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Date;
 
 /**
  * Class SortieController
@@ -223,11 +224,14 @@ class SortieController extends AbstractController
      */
     public function sInscrire(Sortie $sortie, ParticipantRepository $participantRepository, EtatRepository $etatRepository, SortieRepository $sortieRepository)
     {
-        $etat = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
-        $nbParticipants = $sortieRepository->findNumberOfParticipants($sortie);
+        $now = new \DateTime('now');
+        $ouvert = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
+        $cloture = $etatRepository->findOneBy(array('libelle' => 'Clôturée'));
+        $nbParticipantsActuels = $sortieRepository->findNumberOfParticipants($sortie);
+
         $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
 
-        if ($sortie->getEtat() == $etat and $nbParticipants < $sortie->getNbInscriptionMax()) {
+        if ($sortie->getEtat() == $ouvert and $nbParticipantsActuels < $sortie->getNbInscriptionMax() and $now < $sortie->getDateLimiteInscription()) {
             $sortie->ajouterParticipant($participant);
 
             $this->em->persist($sortie);
@@ -235,10 +239,15 @@ class SortieController extends AbstractController
             
             $this->flashy->success('Vous êtes bien inscrit à la sortie ' . $sortie->getNom());
         } else {
-            if ($sortie->getEtat() != $etat) {
+            if ($sortie->getEtat() != $ouvert) {
                 $this->flashy->error('Les inscriptions sont clôturées pour cette sortie');
-            } else {
+            } elseif ($nbParticipantsActuels > $sortie->getNbInscriptionMax()) {
                 $this->flashy->error('Il n\'y a plus de places disponibles pour cette sortie');
+            } elseif ($sortie->getDateLimiteInscription() > $now) {
+                $sortie->setEtat($cloture);
+                $this->em->persist($sortie);
+                $this->em->flush();
+                $this->flashy->error('La date limite d\'inscription pour cette sortie est dépassée' );
             }
         }
       
@@ -249,20 +258,31 @@ class SortieController extends AbstractController
     /**
      * @Route("/{id}/desinscription", name="app_sortie_se_desinscrire", requirements={"id": "\d+"})
      */
-    public function seDesinscrire(Sortie $sortie, ParticipantRepository $participantRepository)
+    public function seDesinscrire(Sortie $sortie, ParticipantRepository $participantRepository, EtatRepository $etatRepository)
     {
+        $now = new \DateTime('now');
+        $activiteEnCours = $etatRepository->findOneBy(array('libelle' => 'Activité en cours'));
+
         $participant = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
 
         if (!$sortie) {
             throw $this->createNotFoundException('Sortie non trouvée');
         }
 
-        $sortie->enleverParticipant($participant);
+        if ($now < $sortie->getDateHeureDebut()) {
+            $sortie->enleverParticipant($participant);
 
-        $this->em->persist($sortie);
-        $this->em->flush();
+            $this->em->persist($sortie);
+            $this->em->flush();
 
-        $this->flashy->success('Vous êtes bien désinscrit à la sortie ' . $sortie->getNom());
+            $this->flashy->success('Vous êtes bien désinscrit à la sortie ' . $sortie->getNom());
+        } else {
+            $sortie->setEtat($activiteEnCours);
+            $this->em->persist($sortie);
+            $this->em->flush();
+            $this->flashy->error('La sortie est en cours, vous ne pouvez plus vous désister' );
+        }
+
         return $this->redirectToRoute('app_sortie_index');
 
     }
