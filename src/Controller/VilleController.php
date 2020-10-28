@@ -23,9 +23,8 @@ class VilleController extends AbstractController
     {
         $utilisateur = $this->getUser();
 
-        if(in_array("ROLE_ADMIN", $utilisateur->getRoles())) {
+        if (in_array("ROLE_ADMIN", $utilisateur->getRoles())) {
 
-            $villes = $villeRepository->findAll();
             $filtreMot = $request->query->get('nom_ville_contient');
             $ajoutNomVille = $request->query->get('nom_ville');
             $ajoutCodePostalVille = $request->query->get('code_postal_ville');
@@ -48,11 +47,8 @@ class VilleController extends AbstractController
                 'villes' => $villes,
             ]);
         } else {
-            $flashy->error('Vous ne disposez pas des droits nécessaire !' );
+            $flashy->error('Vous ne disposez pas des droits nécessaire !');
             return $this->redirectToRoute('app_sortie_index');
         }
     }
-
-
-
 }

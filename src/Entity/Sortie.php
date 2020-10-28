@@ -216,7 +216,6 @@ class Sortie
     }
 
 
-
     public function ajouterParticipant(Participant $participant)
     {
         if ($this->participants->contains($participant)) {

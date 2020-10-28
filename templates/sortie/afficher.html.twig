@@ -26,9 +26,9 @@
         </div>
     </article>
     <h3>Liste des participants inscrits :</h3>
-    <div class="d-flex flex-row">
-        {% if sortie.participants | length > 0%}
-            <table>
+    <div class="col-sm-6 d-flex flex-row">
+        {% if sortie.participants | length > 0 %}
+            <table class="table table-striped text-center">
                 <thead>
                 <tr>
                     <th>Pseudo</th>
@@ -38,7 +38,9 @@
                 <tbody>
                 {% for participant in sortie.participants %}
                     <tr>
-                        <td><a href="{{ path('app_participant_voir_profil', {id: participant.id}) }}">{{ participant.username }}</a></td>
+                        <td>
+                            <a href="{{ path('app_participant_voir_profil', {id: participant.id}) }}">{{ participant.username }}</a>
+                        </td>
                         <td>{{ participant.prenom }} {{ participant.nom }}</td>
                     </tr>
                 {% endfor %}

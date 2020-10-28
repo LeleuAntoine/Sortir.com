@@ -20,17 +20,17 @@ class VilleRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return \Doctrine\ORM\QueryBuilder Returns an array of Ville objects
-    */
+     * @return \Doctrine\ORM\QueryBuilder Returns an array of Ville objects
+     */
     public function trouverVilleAvecFiltre($mot = '')
     {
         $qb = $this->createQueryBuilder('s')
             ->addSelect();
-            if($mot != ''){
-                $qb->andWhere('lower(s.nom) LIKE lower(:mot)')
-                    ->setParameter('mot', '%' . $mot . '%');
-            }
-            $qb->orderBy('s.nom', 'ASC');
-            return $qb;
+        if ($mot != '') {
+            $qb->andWhere('lower(s.nom) LIKE lower(:mot)')
+                ->setParameter('mot', '%' . $mot . '%');
+        }
+        $qb->orderBy('s.nom', 'ASC');
+        return $qb;
     }
 }

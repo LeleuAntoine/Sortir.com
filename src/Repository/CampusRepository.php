@@ -19,32 +19,18 @@ class CampusRepository extends ServiceEntityRepository
         parent::__construct($registry, Campus::class);
     }
 
-    // /**
-    //  * @return Campus[] Returns an array of Campus objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return \Doctrine\ORM\QueryBuilder Returns an array of Ville objects
+     */
+    public function trouverCampusAvecFiltre($mot = '')
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $qb = $this->createQueryBuilder('s')
+            ->addSelect();
+        if ($mot != '') {
+            $qb->andWhere('lower(s.nom) LIKE lower(:mot)')
+                ->setParameter('mot', '%' . $mot . '%');
+        }
+        $qb->orderBy('s.nom', 'ASC');
+        return $qb;
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Campus
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

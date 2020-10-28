@@ -1,20 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CampusController!{% endblock %}
+{% block title %}Gérer les campus{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'D:/wamp64/www/sortir.com/src/Controller/CampusController.php'|file_link(0) }}">src/Controller/CampusController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'D:/wamp64/www/sortir.com/templates/campus/index.html.twig'|file_link(0) }}">templates/campus/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div class="container">
+        <h1 class="d-flex justify-content-center">Gérer les campus</h1>
+        <form method="get">
+            <fieldset>
+                <legend>Filtres</legend>
+                <div class="d-flex justify-content-between">
+                    <div class="form-group">
+                        <div class="form-inline">
+                            <label for="nom_campus_contient">Le nom du campus contient : </label>
+                            <input class="form-control" type="text" id="nom_campus_contient"
+                                   name="nom_campus_contient"/>
+                            <button type="submit" class="btn btn-primary">Recherche</button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <article>
+            <table class="table table-striped text-center">
+                <thead>
+                <tr>
+                    <th>Campus</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for campus in campusTab %}
+                <form method="get">
+                    <tr>
+                        <td>{{ campus.nom }}</td>
+                        <td>
+                            <a href="#" class="btn btn-warning btn-sm" id="modifier">Modifier</a> -
+                            <a href="#" class="btn btn-danger btn-sm" id="supprimer">Supprimer</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="form-group">
+                        <td><input class="form-control" type="text" id="nom_campus"></td>
+                        <td>
+                            <button type="submit" class="btn btn-success btn-sm" id="ajouter">Ajouter</button>
+                        </td>
+                </form>
+                </tr>
+                </tbody>
+            </table>
+        </article>
+        {{ knp_pagination_render(campusTab) }}
+        {% if campusTab.totalItemCount == 0 %}
+            <p>Aucun campus n'est enregistré selon votre critères de recherches.</p>
+        {% endif %}
+    </div>
 {% endblock %}
