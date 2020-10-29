@@ -12,6 +12,10 @@
                     {{ form_row(form.nom) }}
                     {{ form_row(form.dateHeureDebut) }}
                     {{ form_row(form.dateLimiteInscription) }}
+{#                    <label for="{{ form.dateLimiteInscription }}">Date limite d inscription : </label>#}
+{#                    <input type="date" class="form-control" id="{{ form.dateLimiteInscription }}"#}
+{#                           name="{{ form.dateLimiteInscription }}" value="{{ form.dateLimiteInscription }}">#}
+{#                    {% do form.dateLimiteInscription.setRendered %}#}
                     {{ form_row(form.nbInscriptionMax) }}
                     {{ form_row(form.duree) }}
                     {{ form_row(form.infosSortie) }}

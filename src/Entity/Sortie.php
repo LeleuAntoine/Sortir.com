@@ -27,8 +27,7 @@ class Sortie
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Range(
-     *     min="now"
-     * )
+     *     min="now")
      */
     private $dateHeureDebut;
 
@@ -38,10 +37,9 @@ class Sortie
     private $duree;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      * @Assert\Range(
-     *     min="now"
-     * )
+     *     min="now")
      */
     private $dateLimiteInscription;
 

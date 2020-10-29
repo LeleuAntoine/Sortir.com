@@ -3,8 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Sortie;
-use App\Form\CreerSortieType;
-use App\Form\ModifierSortieType;
 use App\Form\SortieType;
 use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
@@ -17,7 +15,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Date;
 
 /**
  * Class SortieController
