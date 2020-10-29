@@ -26,11 +26,15 @@
                             <input class="form-control" type="text" id="nom_sortie_contient"
                                    name="nom_sortie_contient"/>
                         </div>
-                        <div class="form-inline d-flex justify-content-between">
-                            <label for="date_debut">Entre :</label>
-                            <input class="form-control" type="datetime-local" id="date_debut" name="date_debut">
-                            <label for="date_fin">et</label>
-                            <input class="form-control" type="datetime-local" id="date_fin" name="date_fin">
+                        <div class="d-flex justify-content-between">
+                            <div id="div-date-debut" class="form-inline container">
+                                <label for="date_debut">Entre :</label>
+                                <input class="form-control" type="datetime-local" id="date_debut" name="date_debut">
+                            </div>
+                            <div id="div-date-fin" class="form-inline container d-flex justify-content-end">
+                                <label for="date_fin">et :</label>
+                                <input class="form-control" type="datetime-local" id="date_fin" name="date_fin">
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -133,7 +137,8 @@
                             {# Vérifie si l'état de la sortie est autre que l'état créée #}
                             {% if app.user.username == sortie.organisateur.username and (sortie.etat.libelle == "Ouverte" or sortie.etat.libelle == "Clôturée")
                                 or "ROLE_ADMIN" in app.user.roles and (sortie.etat.libelle == "Ouverte" or sortie.etat.libelle == "Clôturée") %}
-                                <a href="{{ path('app_sortie_annuler', {id: sortie.id}) }}" class="btn btn-danger btn-sm">Annuler</a>
+                                <a href="{{ path('app_sortie_annuler', {id: sortie.id}) }}"
+                                   class="btn btn-danger btn-sm">Annuler</a>
                             {% endif %}
                         </td>
                     </tr>
