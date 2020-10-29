@@ -25,8 +25,11 @@ class SortieRepository extends ServiceEntityRepository
 
     public function findListOfSortiesWithFilters($campus = '', $mot = '', $debutPeriode = '', $finPeriode = '', $organisateur = '', $inscrit = '', $nonInscrit = '', $sortiePassee = '')
     {
+
         $qb = $this->createQueryBuilder('s')
-            ->addSelect('c');
+            ->addSelect('c')
+            ->where('s.dateHeureDebut > :date')
+            ->setParameter('date', new \DateTime('-1month'));
         if ($campus != '') {
             $qb->andWhere('c = :campus')
                 ->setParameter('campus', $campus);

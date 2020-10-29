@@ -205,12 +205,12 @@ class SortieController extends AbstractController
     public function afficher($id, SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->find($id);
-        if ($sortie->getEtat()->getLibelle() !== "Créée") {
+        if ($sortie->getEtat()->getLibelle() !== "Créée" and $sortie->getDateHeureDebut() > new \DateTime('-1month')) {
             return $this->render('sortie/afficher.html.twig', [
                 'sortie' => $sortie,
             ]);
         } else {
-            $this->flashy->error('Visualisation impossible');
+            $this->flashy->error('Les détails de cette sortie ne sont pas disponibles');
             return $this->redirectToRoute('app_sortie_index');
         }
     }
@@ -305,7 +305,6 @@ class SortieController extends AbstractController
     public function annulerSortie(Sortie $sortie, Request $request, EtatRepository $etatRepository)
     {
         $motif = $request->request->get('motif');
-        var_dump($motif);
 
         $ouverte = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
         $cloture = $etatRepository->findOneBy(array('libelle' => 'Clôturée'));
