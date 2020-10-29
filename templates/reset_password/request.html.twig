@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Réinitialiser mon mot de passe{% endblock %}
+
+{% block body %}
+    <h1>Réinitialiser mon mot de passe</h1>
+
+    <form method="post">
+        <div>
+            <label for="mail">Adresse mail</label>
+            <input type="email" id="mail" name="mail"/>
+        </div>
+
+        <div>
+            <small>
+                Saisissez votre adresse mail et nous vous enverrons vers un lien pour réinitialiser votre mot de passe.
+            </small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Envoyer un lien de réinitialisation</button>
+    </form>
+{% endblock %}

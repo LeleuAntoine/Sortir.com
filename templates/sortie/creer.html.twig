@@ -8,7 +8,7 @@
         <div class="col-sm-12">
             {{ form_start(form) }}
             <div class="d-flex justify-content-between">
-                <div class="form-group">
+                <div class="form-group col-6">
                     {{ form_row(form.nom) }}
                     {{ form_row(form.dateHeureDebut) }}
                     {{ form_row(form.dateLimiteInscription) }}
@@ -20,7 +20,7 @@
                     {{ form_row(form.duree) }}
                     {{ form_row(form.infosSortie) }}
                 </div>
-                <div class="form-group">
+                <div class="form-group col-6">
                     {{ form_row(form.siteOrganisateur) }}
                     {{ form_row(form.ville) }}
                     {{ form_row(form.codePostal) }}
