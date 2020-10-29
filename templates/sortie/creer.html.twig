@@ -12,10 +12,6 @@
                     {{ form_row(form.nom) }}
                     {{ form_row(form.dateHeureDebut) }}
                     {{ form_row(form.dateLimiteInscription) }}
-{#                    <label for="{{ form.dateLimiteInscription }}">Date limite d inscription : </label>#}
-{#                    <input type="date" class="form-control" id="{{ form.dateLimiteInscription }}"#}
-{#                           name="{{ form.dateLimiteInscription }}" value="{{ form.dateLimiteInscription }}">#}
-{#                    {% do form.dateLimiteInscription.setRendered %}#}
                     {{ form_row(form.nbInscriptionMax) }}
                     {{ form_row(form.duree) }}
                     {{ form_row(form.infosSortie) }}
@@ -31,20 +27,20 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="d-flex justify-content-around">
-        {{ form_row(form.enregistrer, {
-            'attr' : {'class' : 'btn btn-primary'}
-        }) }}
-        {{ form_row(form.publier, {
-            'attr' : {'class' : 'btn btn-success'}
-        }) }}
-        {{ form_row(form.annuler, {
-            'attr' : {'class' : 'btn btn-warning'}
-        }) }}
-        {{ form_row(form.supprimer, {
-            'attr' : {'hidden' : 'true'}
-        }) }}
+            <div class="d-flex justify-content-around">
+                {{ form_row(form.enregistrer, {
+                    'attr' : {'class' : 'btn btn-primary'}
+                }) }}
+                {{ form_row(form.publier, {
+                    'attr' : {'class' : 'btn btn-success'}
+                }) }}
+                {{ form_row(form.annuler, {
+                    'attr' : {'class' : 'btn btn-warning'}
+                }) }}
+            </div>
+            {{ form_row(form.supprimer, {
+                'attr' : {'hidden' : 'true'}
+            }) }}
     </div>
     {{ form_end(form) }}
 {% endblock %}

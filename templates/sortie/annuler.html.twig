@@ -7,7 +7,7 @@
         <h2 class="d-flex justify-content-center">{{ sortie.nom }}</h2>
         <div class="d-flex justify-content-around">
             <form method="post">
-                <div >
+                <div>
                     <p>Nom de la sortie : {{ sortie.nom }}</p>
                     <p>Date et heure de la sortie : {{ sortie.dateHeureDebut | date('d/m/Y à H:i') }}</p>
                     <p>Campus : {{ sortie.siteOrganisateur.nom }}</p>
@@ -15,7 +15,7 @@
                 </div>
                 <div>
                     <label for="motif">Motif : </label>
-                    <textarea id="motif" name="motif" required></textarea>
+                    <textarea id="motif" name="motif" class="form-control" required></textarea>
                 </div>
                 <div>
                     <button type="submit" class="btn btn-warning">Enregistrer</button>

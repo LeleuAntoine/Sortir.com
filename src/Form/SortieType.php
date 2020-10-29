@@ -38,15 +38,15 @@ class SortieType extends AbstractType
         $builder
             ->add('nom', TextType::class,
                 ['label' => 'Nom de la sortie : ',])
-            ->add('dateHeureDebut', DateTimeType::class,
+            ->add('dateHeureDebut', null,
                 ['label' => 'Date et heure de la sortie : ',
                     'model_timezone' => 'Europe/Paris',
-                    'widget' => 'choice',
+                    'widget' => 'single_text',
                     'years' => range(date('Y'), date('y') + 2001)])
-            ->add('dateLimiteInscription', DateTimeType::class,
+            ->add('dateLimiteInscription', null,
                 ['label' => 'Date limite d inscription : ',
                     'model_timezone' => 'Europe/Paris',
-                    'widget' => 'choice',
+                    'widget' => 'single_text',
                     'years' => range(date('Y'), date('y') + 2001)])
             ->add('nbInscriptionMax', IntegerType::class,
                 ['label' => 'Nombre de places : '])

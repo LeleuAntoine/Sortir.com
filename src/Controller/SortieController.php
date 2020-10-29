@@ -302,7 +302,6 @@ class SortieController extends AbstractController
     public function annulerSortie(Sortie $sortie, Request $request, EtatRepository $etatRepository)
     {
         $motif = $request->request->get('motif');
-        var_dump($motif);
 
         $ouverte = $etatRepository->findOneBy(array('libelle' => 'Ouverte'));
         $cloture = $etatRepository->findOneBy(array('libelle' => 'Clôturée'));
