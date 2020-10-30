@@ -1,0 +1,23 @@
+.btn-sm {
+    margin: 3px;
+}
+#date_debut{
+    width: 75%;
+    margin-left: 5%;
+}
+#date_fin{
+    width: 75%;
+    margin-left: 5%;
+}
+#div-date-debut{
+    padding: 0;
+}
+#div-date-fin{
+    padding: 0;
+}
+#inserer_fichier_utilisateurs{
+    border: none;
+}
+#remember-me{
+    margin-top: 10%;
+}
