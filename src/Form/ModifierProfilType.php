@@ -43,11 +43,8 @@ class ModifierProfilType extends AbstractType
             ])
             ->add('photo', FileType::class, [
                 'label' => 'Photo',
-
                 'mapped' => false,
-
                 'required' => false,
-
                 'constraints' => [
                     new Image([
                         'maxSize' => '5M',

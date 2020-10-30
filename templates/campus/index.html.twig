@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CampusController!{% endblock %}
+{% block title %}Gérer les campus{% endblock %}
 
 {% block body %}
 
@@ -34,19 +34,18 @@
                     <tr>
                         <td>{{ campus.nom }}</td>
                         <td>
-                            {# <a href="#" class="btn btn-warning btn-sm" id="modifier">Modifier</a> #}
-                            <a href="{{ path('app_campus_supprime', {id: campus.id}) }}" class="btn btn-danger btn-sm"
-                               id="supprimer">Supprimer</a>
+{#                            <a href="#" class="btn btn-warning btn-sm" id="modifier">Modifier</a>#}
+                            <a href="{{ path('app_campus_supprimer', {id: campus.id}) }}" class="btn btn-danger btn-sm" id="supprimer">Supprimer</a>
                         </td>
                     </tr>
-                {% endfor %}
-                <tr class="form-group">
-                    {{ form_start(form) }}
-                    <td>{{ form_row(form.nom) }}</td>
-                    <td>
-                        <button type="submit" class="btn btn-success btn-sm" id="ajouter">Ajouter</button>
-                    </td>
-                    {{ form_end(form) }}
+                    {% endfor %}
+                    <tr class="form-group">
+                        {{ form_start(form) }}
+                        <td>{{ form_row(form.nom) }}</td>
+                        <td>
+                            <button type="submit" class="btn btn-success btn-sm" id="ajouter">Ajouter</button>
+                        </td>
+                        {{ form_end(form) }}
                 </tr>
                 </tbody>
             </table>

@@ -19,32 +19,33 @@ class ParticipantRepository extends ServiceEntityRepository
         parent::__construct($registry, Participant::class);
     }
 
-    // /**
-    //  * @return Participant[] Returns an array of Participant objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+   public function findParticipantsWithFilters($campus = '', $nom = '', $prenom = '', $actif = null)
+   {
+       $qb = $this->createQueryBuilder('p')
+           ->addSelect('c');
+       if ($campus != '') {
+           $qb->andWhere('c = :campus')
+               ->setParameter('campus', $campus);
+       }
+       if ($nom != '') {
+           $qb->andWhere('lower(p.nom) LIKE lower(:nom)')
+               ->setParameter('nom', '%' . $nom . '%');
+       }
+       if ($prenom != '') {
+           $qb->andWhere('lower(p.prenom) LIKE lower(:prenom)')
+               ->setParameter('prenom', '%' . $prenom . '%');
+       }
+       if ($actif === 'actif') {
+           $qb->andWhere('p.actif = :actif')
+               ->setParameter('actif', true);
+       }
+       if ($actif === 'non_actif') {
+           $qb->andWhere('p.actif = :actif')
+               ->setParameter('actif', false);
+       }
+       $qb->join('p.campus', 'c')
+           ->orderBy('p.nom');
 
-    /*
-    public function findOneBySomeField($value): ?Participant
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+       return $qb;
+   }
 }

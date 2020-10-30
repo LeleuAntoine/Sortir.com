@@ -6,6 +6,11 @@
 parameters:
 
 services:
+    app.command.update_sortie:
+        class: App\Command\UpdateSortieCommand
+        tags:
+            - { name: console.command }
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

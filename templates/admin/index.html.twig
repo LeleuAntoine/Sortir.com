@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} | admin{% endblock %}
+
+{% block body %}
+    <h1 class="d-flex justify-content-center">Tous les utilisateurs</h1>
+    <form method="get">
+        <fieldset>
+            <legend>Filtres</legend>
+            <div class="d-flex justify-content-between">
+                <div class="form-group col-6">
+                    <div class="form-inline d-flex justify-content-between">
+                        <label for="campus">Campus : </label>
+                        <select class="form-control" name="campus" id="campus">
+                            <option value="">Tous</option>
+                            {% for c in campus %}
+                                <option value="{{ c.id }}">{{ c.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-inline d-flex justify-content-between">
+                        <label for="nom_utilisateur_contient">Le nom de l'utilisateur contient : </label>
+                        <input class="form-control" type="text" id="nom_utilisateur_contient"
+                               name="nom_utilisateur_contient"/>
+                    </div>
+                    <div class="form-inline d-flex justify-content-between">
+                        <label for="prenom_utilisateur_contient">Le prénom de l'utilisateur contient : </label>
+                        <input class="form-control" type="text" id="prenom_utilisateur_contient"
+                               name="prenom_utilisateur_contient"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <br>
+                    <input type="radio" id="utilisateurs_actifs" name="utilisateurs_actifs" value="actif">
+                    <label for="utilisateurs_actifs">Utilisateurs actifs </label>
+                    <br>
+                    <input type="radio" id="utilisateurs_non_actifs" name="utilisateurs_actifs" value="non_actif">
+                    <label for="utilisateurs_non_actifs">Utilisateurs non actifs </label>
+                    <br>
+                </div>
+                <div class="form-group align-self-center">
+                    <button type="submit" class="btn btn-primary">Filtrer ma recherche</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+    <table class="table table-striped text-center">
+        <thead>
+        <tr>
+            <th scope="col">Nom</th>
+            <th scope="col">Prénom</th>
+            <th scope="col">Pseudo</th>
+            <th scope="col">Email</th>
+            <th scope="col">Téléphone</th>
+            <th scope="col">Campus</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for participant in participants %}
+            <tr>
+                <td>{{ participant.nom }}</td>
+                <td>{{ participant.prenom }}</td>
+                <td>{{ participant.username }}</td>
+                <td>{{ participant.mail }}</td>
+                <td>{{ participant.telephone }}</td>
+                <td>{{ participant.campus.nom }}</td>
+                {% if participant.actif == true %}
+                    <td><a class="btn btn-warning btn-sm" href="{{ path('app_admin_desactiver_utilisateur', {id: participant.id}) }}">Désactiver</a>
+                {% else %}
+
+                <td><a class="btn btn-success btn-sm" href="{{ path('app_admin_activer_utilisateur', {id: participant.id}) }}">Activer</a>
+                {% endif %}
+                    <a class="btn btn-danger btn-sm" href="{{ path('app_admin_supprimer_utilisateur', {id: participant.id}) }}">Supprimer</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-center">
+        {{ knp_pagination_render(participants) }}
+    </div>
+    <div class="d-flex justify-content-around">
+        <a class="btn btn-primary" href="{{ path('app_admin_ajouter_utilisateur') }}">Ajouter un utilisateur</a>
+
+        <a class="btn btn-primary" href="{{ path('app_admin_ajouter_fichier_utilisateurs') }}">Ajouter un fichier de
+            nouveaux utilisateurs</a>
+    </div>
+{% endblock %}

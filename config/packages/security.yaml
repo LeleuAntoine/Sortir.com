@@ -15,6 +15,7 @@ security:
             pattern: ^/
             provider: our_db_provider
             anonymous: ~
+            user_checker: App\Security\UserChecker
             guard:
                 authenticators:
                     - App\Security\ConnexionAuthenticator
@@ -32,3 +33,4 @@ security:
     access_control:
         - { path: ^/sortie, roles: ROLE_USER }
         - { path: ^/profil, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }

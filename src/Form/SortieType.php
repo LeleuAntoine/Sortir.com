@@ -6,12 +6,13 @@ use App\Entity\Campus;
 use App\Entity\Lieu;
 use App\Entity\Sortie;
 use App\Entity\Ville;
-use App\Repository\CampusRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,15 +38,15 @@ class SortieType extends AbstractType
         $builder
             ->add('nom', TextType::class,
                 ['label' => 'Nom de la sortie : ',])
-            ->add('dateHeureDebut', DateTimeType::class,
+            ->add('dateHeureDebut', null,
                 ['label' => 'Date et heure de la sortie : ',
                     'model_timezone' => 'Europe/Paris',
-                    'widget' => 'choice',
+                    'widget' => 'single_text',
                     'years' => range(date('Y'), date('y') + 2001)])
-            ->add('dateLimiteInscription', DateTimeType::class,
+            ->add('dateLimiteInscription', null,
                 ['label' => 'Date limite d inscription : ',
                     'model_timezone' => 'Europe/Paris',
-                    'widget' => 'choice',
+                    'widget' => 'single_text',
                     'years' => range(date('Y'), date('y') + 2001)])
             ->add('nbInscriptionMax', IntegerType::class,
                 ['label' => 'Nombre de places : '])
@@ -103,7 +104,19 @@ class SortieType extends AbstractType
                 'placeholder' => $lieu ? $lieu->getLongitude() : '',
                 'label' => 'Longitude : ',
                 'mapped' => false,
-                'attr' => array('readonly' => true)]);
+                'attr' => array('readonly' => true)])
+            ->add('enregistrer', SubmitType::class, [
+                'label' => 'Enregistrer',
+            ])
+            ->add('publier', SubmitType::class, [
+                'label' => 'Publier la sortie',
+            ])
+            ->add('supprimer', SubmitType::class, [
+                'label' => 'Supprimer la sortie',
+            ])
+            ->add('annuler', ResetType::class, [
+                'label' => 'Annuler'
+            ]);
     }
 
     function onPreSubmit(FormEvent $event)
