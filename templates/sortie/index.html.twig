@@ -89,13 +89,13 @@
                             {{ sortie.etat.libelle }}
                         </td>
                         <td>
-                            {% if utilisateur.sortiesInscrits.contains(sortie) or app.user.username == sortie.organisateur.username %}
+                            {% if sortie.participants.contains(utilisateur) or app.user.username == sortie.organisateur.username %}
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill"
                                      fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd"
                                           d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                                 </svg>
-                            {% elseif utilisateur != sortie.organisateur and not utilisateur.sortiesInscrits.contains(sortie) %}
+                            {% elseif utilisateur != sortie.organisateur and not sortie.participants.contains(utilisateur) %}
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle"
                                      fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd"
@@ -127,7 +127,7 @@
                             {% endif %}
                             {# Vérifie si l'état de la sortie est à créée #}
                             {% if app.user.username == sortie.organisateur.username and sortie.etat.libelle == "Créée"
-                                or "ROLE_ADMIN" in app.user.roles and sortie.etat.libelle == "Créée" %}
+                                or is_granted('ROLE_ADMIN') and sortie.etat.libelle == "Créée" %}
                                 <a href="{{ path('app_sortie_modifier', {id: sortie.id}) }}"
                                    class="btn btn-warning btn-sm">Modifier</a>
                                 <a href="{{ path('app_sortie_publier', {id: sortie.id}) }}"
@@ -136,7 +136,7 @@
 
                             {# Vérifie si l'état de la sortie est autre que l'état créée #}
                             {% if app.user.username == sortie.organisateur.username and (sortie.etat.libelle == "Ouverte" or sortie.etat.libelle == "Clôturée")
-                                or "ROLE_ADMIN" in app.user.roles and (sortie.etat.libelle == "Ouverte" or sortie.etat.libelle == "Clôturée") %}
+                                or is_granted('ROLE_ADMIN') and (sortie.etat.libelle == "Ouverte" or sortie.etat.libelle == "Clôturée") %}
                                 <a href="{{ path('app_sortie_annuler', {id: sortie.id}) }}"
                                    class="btn btn-danger btn-sm">Annuler</a>
                             {% endif %}

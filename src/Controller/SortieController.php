@@ -45,8 +45,7 @@ class SortieController extends AbstractController
                           Request $request, ParticipantRepository $participantRepository): Response
     {
         $campus = $campusRepository->findAll();
-        $user = $this->getUser();
-        $utilisateur = $participantRepository->findOneBy(['username' => $user->getUsername()]);
+        $utilisateur = $participantRepository->findOneBy(['username' => $this->getUser()->getUsername()]);
 
         //Sortie sur le campus
         $filtreCampus = $request->query->get('campus');
