@@ -99,7 +99,7 @@ class SortieController extends AbstractController
             $sortieRepository->findListOfSortiesWithFilters($filtreCampus, $filtreMot, $dateDebut, $dateFin, $filtreOrganisateur, $filtreInscrit, $filtreNonInscrit,
                 $filtreSortiePassee),
             $request->query->getInt('page', 1),
-            10
+            5
         );
 
         return $this->render('sortie/index.html.twig', [

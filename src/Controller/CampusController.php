@@ -13,6 +13,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/campus")
+ */
 class CampusController extends AbstractController
 {
     private $flashy;
@@ -28,7 +31,7 @@ class CampusController extends AbstractController
     }
 
     /**
-     * @Route("/campus", name="campus")
+     * @Route("", name="app_campus_index")
      */
     public function index(CampusRepository $campusRepository, PaginatorInterface $paginator,
                           Request $request)
@@ -50,13 +53,13 @@ class CampusController extends AbstractController
                     if ($campus->getNom() === $c->getNom())
                     {
                         $exist = false;
-                        $this->flashy->error('Ce campus éxiste déjà');
+                        $this->flashy->error('Ce campus existe déjà');
                     }
                 }
                 if ($exist) {
                     $this->em->persist($campus);
                     $this->em->flush();
-                    $this->flashy->success('Campus crée avec succé !');
+                    $this->flashy->success('Campus créé avec succès !');
                 }
             }
             $campusTab = $paginator->paginate(
@@ -70,13 +73,13 @@ class CampusController extends AbstractController
                 'form' => $form->createView()
             ]);
         } else {
-            $this->flashy->error('Vous ne disposez pas des droits nécessaire !');
+            $this->flashy->error('Vous ne disposez pas des droits nécessaires !');
             return $this->redirectToRoute('app_sortie_index');
         }
     }
 
     /**
-     * @Route("/{id}/supprimer", name="app_campus_supprime", requirements={"id": "\d+"})
+     * @Route("/{id}/supprimer", name="app_campus_supprimer", requirements={"id": "\d+"})
      */
     public function supprimerCampus(Campus $campus, ParticipantRepository $participantRepository)
     {
@@ -87,11 +90,11 @@ class CampusController extends AbstractController
             if (empty($participant)) {
                 $this->em->remove($campus);
                 $this->em->flush();
-                $this->flashy->success('Campus supprimée avec succès !');
+                $this->flashy->success('Campus supprimé avec succès !');
             } else {
                 $this->flashy->error('Ce campus ne peut pas être supprimé');
             }
-            return $this->redirectToRoute('campus');
+            return $this->redirectToRoute('app_campus_index');
         } else {
             $this->flashy->error('Vous ne disposez pas des droits nécessaires !');
             return $this->redirectToRoute('app_sortie_index');
