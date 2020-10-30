@@ -67,6 +67,7 @@ class UtilisateurController extends AbstractController
                 $this->addFlash('success', 'Votre profil a été modifié avec succès');
                 return $this->redirectToRoute('app_participant_voir_profil', ['id' => $participant->getId()]);
             }
+            $em->refresh($participant);
 
             return $this->render('utilisateur/modifierProfil.html.twig', [
                 'profilForm' => $profilForm->createView(),

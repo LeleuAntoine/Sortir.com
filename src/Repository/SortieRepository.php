@@ -28,6 +28,9 @@ class SortieRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('s')
             ->addSelect('c')
+            ->addSelect('e')
+            ->addSelect('o')
+            ->addSelect('participants')
             ->where('s.dateHeureDebut > :date')
             ->setParameter('date', new \DateTime('-1month'));
         if ($campus != '') {
@@ -45,27 +48,30 @@ class SortieRepository extends ServiceEntityRepository
         }
         if ($organisateur != '') {
             $qb->andWhere('s.organisateur = :organisateur')
-                ->setParameter('organisateur', $organisateur->getId());
+                ->setParameter('organisateur', $organisateur);
         }
         if ($inscrit != '') {
             $qb->andWhere('p = :inscrit')
-                ->setParameter('inscrit', $inscrit->getId())
+                ->setParameter('inscrit', $inscrit)
                 ->join('s.participants', 'p');
         }
         if ($nonInscrit != '') {
             $sub = $this->createQueryBuilder('sortie')
                 ->select('sortie.id')
-                ->where('participants = :nonInscrit')
-                ->join('sortie.participants', 'participants');
+                ->where('participant = :nonInscrit')
+                ->join('sortie.participants', 'participant');
             $qb->andWhere($qb->expr()->notIn('s.id', $sub->getDQL()))
-                ->setParameter('nonInscrit', $nonInscrit->getId());
+                ->setParameter('nonInscrit', $nonInscrit);
 
         }
         if ($sortiePassee != '') {
             $qb->andWhere('s.etat = :passee')
-                ->setParameter('passee', $sortiePassee->getId());
+                ->setParameter('passee', $sortiePassee);
         }
         $qb->join('s.siteOrganisateur', 'c')
+            ->join('s.etat', 'e')
+            ->join('s.organisateur', 'o')
+            ->leftJoin('s.participants', 'participants')
             ->orderBy('s.dateHeureDebut', 'ASC');
 
         return $qb;
