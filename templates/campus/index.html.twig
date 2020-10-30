@@ -34,7 +34,7 @@
                         <td>{{ campus.nom }}</td>
                         <td>
 {#                            <a href="#" class="btn btn-warning btn-sm" id="modifier">Modifier</a>#}
-                            <a href="{{ path('app_campus_supprime', {id: campus.id}) }}" class="btn btn-danger btn-sm" id="supprimer">Supprimer</a>
+                            <a href="{{ path('app_campus_supprimer', {id: campus.id}) }}" class="btn btn-danger btn-sm" id="supprimer">Supprimer</a>
                         </td>
                     </tr>
                     {% endfor %}

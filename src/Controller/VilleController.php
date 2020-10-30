@@ -13,6 +13,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/ville")
+ */
 class VilleController extends AbstractController
 {
     private $flashy;
@@ -28,7 +31,7 @@ class VilleController extends AbstractController
     }
 
     /**
-     * @Route("/ville", name="ville")
+     * @Route("", name="app_ville_index")
      */
     public function index(VilleRepository $villeRepository, PaginatorInterface $paginator,
                           Request $request)
@@ -50,13 +53,13 @@ class VilleController extends AbstractController
                     if ($ville->getNom() === $v->getNom() and
                         $ville->getCodePostal() === $v->getCodePostal()) {
                         $exist = false;
-                        $this->flashy->error('Cette ville éxiste déjà');
+                        $this->flashy->error('Cette ville existe déjà');
                     }
                 }
                 if ($exist) {
                     $this->em->persist($ville);
                     $this->em->flush();
-                    $this->flashy->success('Ville crée avec succé !');
+                    $this->flashy->success('Ville créée avec succès !');
                 }
             }
 
@@ -79,7 +82,7 @@ class VilleController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/supprimer", name="app_ville_supprime", requirements={"id": "\d+"})
+     * @Route("/{id}/supprimer", name="app_ville_supprimer", requirements={"id": "\d+"})
      */
     public function supprimerVille(Ville $ville, LieuRepository $lieuRepository)
     {
@@ -92,9 +95,9 @@ class VilleController extends AbstractController
                 $this->em->flush();
                 $this->flashy->success('Ville supprimée avec succès !');
             } else {
-                $this->flashy->error('Cette ville ne peut pas être supprimé');
+                $this->flashy->error('Cette ville ne peut pas être supprimée');
             }
-            return $this->redirectToRoute('ville');
+            return $this->redirectToRoute('app_ville_index');
         } else {
             $this->flashy->error('Vous ne disposez pas des droits nécessaires !');
             return $this->redirectToRoute('app_sortie_index');

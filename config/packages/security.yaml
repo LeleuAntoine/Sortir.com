@@ -15,6 +15,7 @@ security:
             pattern: ^/
             provider: our_db_provider
             anonymous: ~
+            user_checker: App\Security\UserChecker
             guard:
                 authenticators:
                     - App\Security\ConnexionAuthenticator
