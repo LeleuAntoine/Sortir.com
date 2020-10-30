@@ -6,6 +6,7 @@ namespace App\Command;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,7 +24,8 @@ class UpdateSortieCommand extends Command
             ->setDescription('Mise à jour de l\'état des sorties');
     }
 
-    public function __construct(SortieRepository $sortieRepository, EtatRepository $etatRepository, EntityManagerInterface $em)
+    public function __construct(SortieRepository $sortieRepository, EtatRepository $etatRepository,
+                                EntityManagerInterface $em)
     {
         $this->em = $em;
         $this->sortieRepository = $sortieRepository;
@@ -33,35 +35,41 @@ class UpdateSortieCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $sorties = $this->sortieRepository->findAll();
+        $etatOuvert = $this->etatRepository->findOneBy(array('libelle' => 'Ouverte'));
         $etatCloture = $this->etatRepository->findOneBy(array('libelle' => 'Clôturée'));
         $etatEnCours = $this->etatRepository->findOneBy(array('libelle' => 'Activité en cours'));
         $etatPassee = $this->etatRepository->findOneBy(array('libelle' => 'Passée'));
+        $etats = [$etatEnCours, $etatCloture, $etatOuvert];
 
-        foreach ($sorties as $sortie) {
-            $dateJour = new \DateTime('now');
-            $stringDateJour = strtotime($dateJour->format('d-m-Y H:i'));
+        foreach ($etats as $etat) {
+            $sorties = $this->sortieRepository->findByEtat($etat);
 
-            $dateLimite = strtotime($sortie->getDateLimiteInscription()->format('d-m-Y H:i'));
-            $dateDebut = strtotime($sortie->getDateHeureDebut()->format('d-m-Y H:i'));
+            foreach ($sorties as $sortie) {
 
-            $dateDebutPlusDuree = strtotime(date("d-m-Y H:i", strtotime($sortie->getDateHeureDebut()->format('d-m-Y H:i') . "+{$sortie->getDuree()}  minutes")));
+                $dateJour = new \DateTime('now');
+                $stringDateJour = strtotime($dateJour->format('d-m-Y H:i'));
 
-            $nom = $sortie->getNom();
-            if ($sortie->getEtat()->getLibelle() !== 'Créée'
-                and $sortie->getEtat()->getLibelle() !== 'Passée'
-                and $sortie->getEtat()->getLibelle() !== 'Annulée') {
-                if ($stringDateJour >= $dateLimite and $stringDateJour < $dateDebut) {
-                    $sortie->setEtat($etatCloture);
-                    $output->writeln("$nom : Clôturée");
-                }
-                if ($stringDateJour >= $dateDebut and $stringDateJour <= $dateDebutPlusDuree) {
-                    $sortie->setEtat($etatEnCours);
-                    $output->writeln("$nom : Activité en cours");
-                }
-                if ($stringDateJour > $dateDebutPlusDuree) {
-                    $sortie->setEtat($etatPassee);
-                    $output->writeln("$nom : Passée");
+                $dateLimite = strtotime($sortie->getDateLimiteInscription()->format('d-m-Y H:i'));
+                $dateDebut = strtotime($sortie->getDateHeureDebut()->format('d-m-Y H:i'));
+
+                $dateDebutPlusDuree = strtotime(date("d-m-Y H:i", strtotime($sortie->getDateHeureDebut()->format('d-m-Y H:i') . "+{$sortie->getDuree()}  minutes")));
+
+                $nom = $sortie->getNom();
+                if ($sortie->getEtat()->getLibelle() !== 'Créée'
+                    and $sortie->getEtat()->getLibelle() !== 'Passée'
+                    and $sortie->getEtat()->getLibelle() !== 'Annulée') {
+                    if ($stringDateJour >= $dateLimite and $stringDateJour < $dateDebut) {
+                        $sortie->setEtat($etatCloture);
+                        $output->writeln("$nom : Clôturée");
+                    }
+                    if ($stringDateJour >= $dateDebut and $stringDateJour <= $dateDebutPlusDuree) {
+                        $sortie->setEtat($etatEnCours);
+                        $output->writeln("$nom : Activité en cours");
+                    }
+                    if ($stringDateJour > $dateDebutPlusDuree) {
+                        $sortie->setEtat($etatPassee);
+                        $output->writeln("$nom : Passée");
+                    }
                 }
             }
         }
