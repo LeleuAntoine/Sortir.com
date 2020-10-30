@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use App\Form\SortieType;
 use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
@@ -201,4 +203,28 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('app_sortie_index');
 
     }
+
+//    /**
+//     * @Route("/lieu/ajouter", name="app_lieu_ajouter")
+//     */
+//    public function ajoutLieu(Ville $ville, Request $request){
+//        $lieu = new Lieu();
+//        $form = $this->createForm(Lieu::class, $lieu);
+//        $form->handleRequest($request);
+//
+//        if ($form->isSubmitted() && $form->isValid()){
+//            $lieu->setVille($ville);
+//
+//            $this->em->persist($lieu);
+//            $this->em->flush();
+//
+//            return $this->redirectToRoute('app_sortie_creer');
+//        }
+//        return $this->render(
+//            'sortie/lieu.html.twig', array(
+//                'form' => $form->createView(),
+//                'ville' => $ville
+//            )
+//        );
+//    }
 }

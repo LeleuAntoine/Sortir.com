@@ -35,19 +35,20 @@
                         <td>{{ ville.nom }}</td>
                         <td>{{ ville.codePostal }}</td>
                         <td>
-                            <a href="#" class="btn btn-warning btn-sm">Modifier</a> -
-                            <a href="#" class="btn btn-danger btn-sm">Supprimer</a>
+                            {# <a href="#" class="btn btn-warning btn-sm">Modifier</a> #}
+                            <a href="{{ path('app_ville_supprime', {id: ville.id}) }}" class="btn btn-danger btn-sm"
+                               id="supprimer">Supprimer</a>
                         </td>
                     </tr>
                 {% endfor %}
                 <tr class="form-group">
-                    <form method="post">
-                        <td><input class="form-control" type="text" id="nom_ville"></td>
-                        <td><input class="form-control" type="text" id="code_postal_ville"></td>
-                        <td>
-                            <button type="submit" class="btn btn-success btn-sm">Ajouter</button>
-                        </td>
-                    </form>
+                    {{ form_start(form) }}
+                    <td>{{ form_row(form.nom) }}</td>
+                    <td>{{ form_row(form.codePostal) }}</td>
+                    <td>
+                        <button type="submit" class="btn btn-success btn-sm">Ajouter</button>
+                    </td>
+                    {{ form_end(form) }}
                 </tr>
                 </tbody>
             </table>
