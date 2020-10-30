@@ -92,11 +92,13 @@ class SortieRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByEtat($etat)
+    public function findByEtat()
     {
         return $qb = $this->createQueryBuilder('s')
-            ->where('s.etat = :etat')
-            ->setParameter('etat', $etat)
+            ->where('lower(etat.libelle) LIKE lower(\'Ouverte\')')
+            ->orWhere('lower(etat.libelle) LIKE lower(\'Clôturée\')')
+            ->orWhere('lower(etat.libelle) LIKE lower(\'Activité en cours\')')
+            ->join('s.etat', 'etat')
             ->getQuery()
             ->getResult();
     }
